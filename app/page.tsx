@@ -12,9 +12,13 @@ export default function Home() {
       <ParallaxDither />
 
       {/* HEADER */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
-        <div className="text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase">Project Aquarius // Protocol v1.0</div>
-        <a href="https://github.com/Project-Aquarius-White" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[SOURCE_DETECTED]</a>
+      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-between items-center mix-blend-difference pointer-events-none">
+        <div className="text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase pointer-events-auto">Project Aquarius // Protocol v1.0</div>
+        <nav className="flex gap-6 pointer-events-auto">
+          <Link href="#mission" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[MISSION]</Link>
+          <Link href="#writeups" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[WRITEUPS]</Link>
+          <a href="https://github.com/Project-Aquarius-White/Aquarius-Website" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[SOURCE_DETECTED]</a>
+        </nav>
       </header>
 
       {/* HERO: THE CALL TO ARMS */}
@@ -84,7 +88,7 @@ export default function Home() {
       </section>
 
       {/* SECTION 02: THE ETHOS */}
-      <section className="relative z-10 py-48 bg-black">
+      <section id="mission" className="relative z-10 py-48 bg-black scroll-mt-24">
         <div className="max-w-4xl mx-auto text-center space-y-12 px-6">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
             "CREDENTIALS ARE FIAT.<br />
@@ -117,7 +121,7 @@ export default function Home() {
       </section>
 
       {/* SECTION 03: THE 14-DAY CADENCE */}
-      <section className="relative z-10 border-y border-zinc-900 bg-zinc-950">
+      <section id="writeups" className="relative z-10 border-y border-zinc-900 bg-zinc-950 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-6 py-24">
           <div className="flex justify-between items-baseline mb-16">
             <h2 className="text-4xl font-bold tracking-tighter">THE PROTOCOL</h2>

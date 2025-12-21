@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google"; // Cyberpunk appropriate
 import "./globals.css";
-import DitherGrid from "./components/DitherGrid";
+
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -25,8 +25,7 @@ export default function RootLayout({
         {/* CRT Scanline Overlay from globals.css */}
         <div className="scanlines fixed inset-0 z-50 pointer-events-none" />
 
-        {/* Interactive Background */}
-        <DitherGrid />
+
 
         {/* Main Content */}
         <main className="relative z-10 flex flex-col min-h-screen">

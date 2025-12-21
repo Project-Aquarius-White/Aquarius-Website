@@ -2,6 +2,8 @@
 title: "SOP: Your First Reproduction"
 date: "2025-12-21"
 description: "The standard operating procedure for reproducing a research paper."
+author: "The Warlord"
+github_repo: "https://github.com/Project-Aquarius-White"
 ---
 
 # The Aquarius Protocol
