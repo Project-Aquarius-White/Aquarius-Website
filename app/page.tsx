@@ -1,134 +1,166 @@
 import AquariusDither from "./components/AquariusDither";
+import ParallaxDither from "./components/ParallaxDither";
 import Link from "next/link";
-import { ArrowRight, Github, BookOpen, Terminal, ChevronRight } from "lucide-react";
+import { ArrowRight, Terminal } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen font-sans selection:bg-aquarius-cyan selection:text-black">
+    <div className="flex flex-col min-h-screen font-sans selection:bg-aquarius-cyan selection:text-black bg-black text-white overflow-x-hidden">
 
-      {/* GLOBAL BACKGROUND TEXTURE */}
-      <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('/noise.png')] mix-blend-overlay"></div>
+      {/* GLOBAL LAYERS */}
+      <div className="fixed inset-0 z-0 opacity-[0.05] pointer-events-none bg-[url('/noise.png')] mix-blend-overlay"></div>
+      <ParallaxDither />
 
-      {/* HEADER / NAV */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-8 py-6 flex justify-between items-center mix-blend-difference text-white">
-        <div className="text-xs font-mono tracking-[0.2em]">PROJECT AQUARIUS // 2025</div>
-        <a href="https://github.com/Project-Aquarius-White" className="text-xs font-mono hover:text-aquarius-cyan transition-colors">[GITHUB]</a>
+      {/* HEADER */}
+      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
+        <div className="text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase">Project Aquarius // Protocol v1.0</div>
+        <a href="https://github.com/Project-Aquarius-White" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[SOURCE_DETECTED]</a>
       </header>
 
-      {/* HERO SECTION */}
-      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center pt-24 pb-12 px-6">
+      {/* HERO: THE CALL TO ARMS */}
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 pt-20">
 
-        {/* Main Dither Viz */}
-        <div className="w-full max-w-5xl mb-12 relative grayscale hover:grayscale-0 transition-all duration-1000 ease-out">
+        <div className="w-full max-w-4xl mb-8 relative grayscale hover:grayscale-0 transition-all duration-700">
           <AquariusDither />
         </div>
 
-        <div className="max-w-6xl w-full text-center space-y-12">
-          <h1 className="text-6xl md:text-9xl font-bold tracking-tighter text-white leading-[0.8] mix-blend-difference">
-            MASTER <br /> THE STATE <br /> OF THE ART
+        <div className="text-center space-y-8 max-w-5xl relative">
+
+          <h1 className="text-5xl md:text-8xl lg:text-[9rem] font-bold tracking-tighter leading-[0.85] mix-blend-difference">
+            WEAPONIZE <br />
+            YOUR <br />
+            INTELLECT
           </h1>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 pt-8">
-            <div className="max-w-xs text-left text-sm text-zinc-400 font-mono leading-relaxed border-l border-zinc-800 pl-4">
-              01. INTAKE<br />
-              02. SIMULATE<br />
-              03. BUILD<br />
-              04. DEPLOY
-            </div>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl text-zinc-400 font-light leading-relaxed">
+            The Ivory Tower is crumbling. <br />
+            We are the salvage crew. We take State-of-the-Art research,
+            rip it from the PDF, and <span className="text-white font-medium">rebuild it from scratch.</span>
+          </p>
 
-            <p className="max-w-xl text-lg md:text-xl text-zinc-300 font-light leading-relaxed text-left">
-              Stop reading papers. Start rebuilding them. <br />
-              <strong className="text-white font-medium">Project Aquarius</strong> is a protocol for transforming academic intelligence into production-grade personal IP.
-            </p>
-          </div>
-
-          <div className="pt-16 flex flex-col md:flex-row gap-6 justify-center">
-            <Link href="/docs/protocol" className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-black font-bold tracking-wide hover:bg-aquarius-cyan transition-colors duration-300">
-              <span>INITIATE PROTOCOL</span>
+          <div className="pt-8 flex flex-col items-center gap-4">
+            <Link href="/docs/protocol" className="group relative inline-flex items-center justify-center px-12 py-5 bg-white text-black font-bold tracking-widest text-sm uppercase hover:bg-aquarius-cyan transition-colors duration-300">
+              <span>Initiate Protocol</span>
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <a href="https://discord.gg/projectaquarius" className="inline-flex items-center justify-center px-8 py-4 border border-zinc-800 text-zinc-400 hover:text-white hover:border-white transition-colors duration-300">
-              JOIN THE SQUAD
-            </a>
+            <div className="text-[10px] font-mono text-zinc-600 tracking-widest">
+              WARNING: IRREVERSIBLE COGNITIVE UPGRADE
+            </div>
           </div>
         </div>
       </section>
 
-      {/* MANIFESTO SECTION - Editorial Layout */}
-      <section className="relative z-10 bg-zinc-950 py-32 px-6 border-t border-zinc-900">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12">
-          <div className="md:col-span-4">
-            <div className="sticky top-32">
-              <h2 className="text-zinc-500 font-mono text-sm tracking-widest mb-4">THE PROBLEM</h2>
-              <div className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                Reading is <span className="text-zinc-600 line-through">Passive</span>. <br />
-                Building is <span className="text-aquarius-cyan">Active</span>.
-              </div>
+      {/* SECTION 01: THE CONFRONTATION */}
+      <section className="relative z-10 py-32 px-6 border-t border-zinc-900 bg-zinc-950">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <div className="inline-block px-3 py-1 border border-red-900 text-red-500 font-mono text-xs tracking-widest">
+              ERROR: COMPREHENSION_NOT_FOUND
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold leading-tight">
+              You didn't learn it. <br />
+              <span className="text-zinc-600">You just read it.</span>
+            </h2>
+            <p className="text-xl text-zinc-400 leading-relaxed">
+              Reading papers feels like learning. It's a dopamine hit. A false flag.
+              True understanding is a <span className="text-white">violent act of creation</span>.
+              It requires confronting the messy reality of missing hyperparameters, ambiguous math, and broken dependencies.
+            </p>
+          </div>
+          <div className="relative aspect-square border border-zinc-900 bg-black p-8 font-mono text-xs md:text-sm text-zinc-500 flex flex-col">
+            <div className="flex-1 space-y-2 overflow-hidden opacity-50">
+              <div>&gt; git clone https://arxiv.org/abs/2301.1234</div>
+              <div>&gt; pip install torch</div>
+              <div className="text-red-500">&gt; ERROR: tensor dimension mismatch expected [B, 128] got [B, 64]</div>
+              <div>&gt; consulting whitepaper...</div>
+              <div>&gt; reconstructing attention_head.py...</div>
+              <div className="text-aquarius-cyan animate-pulse">&gt; SUCCESS: loss convergence detected.</div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-zinc-900 text-center text-zinc-700">
+                  // SIMULATION COMPLETE
             </div>
           </div>
-          <div className="md:col-span-8 space-y-12 text-lg md:text-xl text-zinc-300 font-light leading-relaxed">
-            <p>
-              You read a groundbreaking paper. You understand the abstract. You nod along with the methodology. You close the PDF.
-              <br /><br />
-              <span className="text-white font-normal">Nothing changes.</span>
-            </p>
-            <p>
-              The gap between "I read it" and "I can build it" is where most learning dies. We reject the illusion of comprehension that comes from passive consumption. We believe that knowledge without implementation is just trivia.
-            </p>
-            <div className="p-8 border border-zinc-800 bg-black">
-              <h3 className="text-white font-bold mb-4 font-mono">THE STANDARD</h3>
-              <p className="text-zinc-400 text-base">
-                "You don't truly understand a system until you can rebuild it from scratch." <br />
-                Everything else—the repos, the blog posts, the GitHub stars—is just evidence of that understanding.
+        </div>
+      </section>
+
+      {/* SECTION 02: THE ETHOS */}
+      <section className="relative z-10 py-48 bg-black">
+        <div className="max-w-4xl mx-auto text-center space-y-12 px-6">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+            "CREDENTIALS ARE FIAT.<br />
+            <span className="text-aquarius-cyan">CODE IS GOLD.</span>"
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8 text-left py-12">
+            <div className="space-y-4">
+              <div className="w-10 h-1 bg-zinc-800"></div>
+              <h3 className="font-bold text-white">Sovereignty</h3>
+              <p className="text-zinc-500 text-sm">
+                Don't wait for a lab to hire you. Build the lab yourself. Your GitHub is your territory.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="w-10 h-1 bg-zinc-800"></div>
+              <h3 className="font-bold text-white">Proof of Work</h3>
+              <p className="text-zinc-500 text-sm">
+                A degree says you promised to study. A reproduction proves you delivered.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="w-10 h-1 bg-zinc-800"></div>
+              <h3 className="font-bold text-white">Access</h3>
+              <p className="text-zinc-500 text-sm">
+                We bring high knowledge down from the tower. We distribute wisdom to the worthy.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* METRICS / CYCLE - Swiss Grid Layout */}
-      <section className="relative z-10 py-32 border-t border-zinc-900 bg-black">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-24">
-            <h2 className="text-6xl font-bold text-white tracking-tighter max-w-2xl">THE 14-DAY COMPOUND</h2>
-            <p className="text-zinc-500 font-mono text-right mt-8 md:mt-0">RHYTHM &gt; PERFECTION</p>
+      {/* SECTION 03: THE 14-DAY CADENCE */}
+      <section className="relative z-10 border-y border-zinc-900 bg-zinc-950">
+        <div className="max-w-7xl mx-auto px-6 py-24">
+          <div className="flex justify-between items-baseline mb-16">
+            <h2 className="text-4xl font-bold tracking-tighter">THE PROTOCOL</h2>
+            <div className="font-mono text-zinc-600 text-xs md:text-sm">CYCLE_DURATION: 336 HOURS</div>
           </div>
 
-          <div className="grid md:grid-cols-4 border-t border-l border-zinc-800">
+          <div className="grid grid-cols-1 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-zinc-900 border border-zinc-900 bg-black">
             {[
-              { id: "01", title: "De-Noise", desc: "Filter signal from academic noise." },
-              { id: "02", title: "Simulation", desc: "Translate math into whiteboard logic." },
-              { id: "03", title: "Lean Build", desc: "Implement core logic. No bloat." },
-              { id: "04", title: "Telemetry", desc: "Validate against real-world data." }
-            ].map((item) => (
-              <div key={item.id} className="border-r border-b border-zinc-800 p-8 md:p-12 hover:bg-zinc-900/50 transition-colors group h-full flex flex-col justify-between min-h-[300px]">
-                <div className="font-mono text-aquarius-cyan mb-4 opacity-50 group-hover:opacity-100">{item.id}</div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">{item.title}</h3>
-                  <p className="text-zinc-500 text-sm leading-relaxed">{item.desc}</p>
-                </div>
+              { day: "01", label: "INTAKE", text: "Signal extraction." },
+              { day: "02", label: "SIM", text: "Math -> Logic." },
+              { day: "04", label: "BUILD", text: "Logic -> Code." },
+              { day: "08", label: "HUNT", text: "Validate on data." },
+              { day: "12", label: "SHIP", text: "Broadcast results." },
+            ].map((step, i) => (
+              <div key={i} className="p-8 group hover:bg-aquarius-cyan/5 transition-colors cursor-default">
+                <div className="font-mono text-xs text-zinc-600 mb-2">T-PLUS-{step.day}</div>
+                <div className="font-bold text-xl text-white mb-2 group-hover:text-aquarius-cyan transition-colors">{step.label}</div>
+                <div className="text-zinc-500 text-sm">{step.text}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FOOTER - Minimal */}
-      <footer className="relative z-10 border-t border-zinc-900 py-24 px-6 bg-zinc-950">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-8 md:mb-0">
-            <div className="font-bold text-2xl text-white tracking-tighter mb-2">PROJECT AQUARIUS</div>
-            <div className="text-zinc-600 text-sm">Bring the knowledge down from the tower.</div>
-          </div>
-
-          <div className="flex gap-8 font-mono text-sm">
-            <Link href="/docs/protocol" className="text-zinc-400 hover:text-white transition-colors">PROTOCOL</Link>
-            <a href="#" className="text-zinc-400 hover:text-white transition-colors">TWITTER</a>
-            <a href="#" className="text-zinc-400 hover:text-white transition-colors">DISCORD</a>
+      {/* FOOTER */}
+      <footer className="relative z-10 py-32 px-6 bg-black text-center">
+        <div className="max-w-2xl mx-auto space-y-8">
+          <h2 className="text-2xl font-bold text-zinc-700 uppercase tracking-widest">
+            End of Transmission
+          </h2>
+          <div className="flex justify-center gap-8">
+            <Link href="/docs/protocol" className="text-4xl md:text-6xl font-bold hover:text-aquarius-cyan transition-colors">
+              START
+            </Link>
+            <a href="https://github.com/Project-Aquarius-White" className="text-4xl md:text-6xl font-bold hover:text-aquarius-cyan transition-colors">
+              FORK
+            </a>
           </div>
         </div>
+        <div className="mt-32 text-zinc-800 font-mono text-xs">
+          PROJECT AQUARIUS &copy; 2025 // NO RIGHTS RESERVED. COPY EVERYTHING.
+        </div>
       </footer>
-
     </div>
   );
 }
