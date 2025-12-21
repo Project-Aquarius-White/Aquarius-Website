@@ -6,7 +6,7 @@ type ProtocolStep = "INTAKE" | "SIM" | "BUILD" | "HUNT" | "SHIP" | null;
 
 export default function ProtocolViz({ step }: { step: ProtocolStep }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const requestRef = useRef<number>();
+    const requestRef = useRef<number | undefined>(undefined);
     const frameRef = useRef(0);
 
     useEffect(() => {

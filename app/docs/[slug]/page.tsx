@@ -37,11 +37,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
 }
 
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
 const options = {
     parseFrontmatter: true,
     mdxOptions: {
+        remarkPlugins: [remarkMath],
         rehypePlugins: [
             rehypeSlug,
+            rehypeKatex,
             [rehypeAutolinkHeadings, { behavior: 'wrap' }],
             [rehypePrettyCode, {
                 theme: 'one-dark-pro',
