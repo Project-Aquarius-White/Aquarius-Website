@@ -2,6 +2,7 @@ import AquariusDither from "./components/AquariusDither";
 import ParallaxDither from "./components/ParallaxDither";
 import Link from "next/link";
 import { ArrowRight, Terminal } from "lucide-react";
+import ProtocolSection from "./components/ProtocolSection";
 
 export default function Home() {
   return (
@@ -121,31 +122,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 03: THE 14-DAY CADENCE */}
-      <section id="writeups" className="relative z-10 border-y border-zinc-900 bg-zinc-950 scroll-mt-24">
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <div className="flex justify-between items-baseline mb-16">
-            <h2 className="text-4xl font-bold tracking-tighter">THE PROTOCOL</h2>
-            <div className="font-mono text-zinc-600 text-xs md:text-sm">CYCLE_DURATION: 336 HOURS</div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-zinc-900 border border-zinc-900 bg-black">
-            {[
-              { day: "01", label: "INTAKE", text: "Signal extraction." },
-              { day: "02", label: "SIM", text: "Math -> Logic." },
-              { day: "04", label: "BUILD", text: "Logic -> Code." },
-              { day: "08", label: "HUNT", text: "Validate on data." },
-              { day: "12", label: "SHIP", text: "Broadcast results." },
-            ].map((step, i) => (
-              <div key={i} className="p-8 group hover:bg-aquarius-cyan/5 transition-colors cursor-default">
-                <div className="font-mono text-xs text-zinc-600 mb-2">T-PLUS-{step.day}</div>
-                <div className="font-bold text-xl text-white mb-2 group-hover:text-aquarius-cyan transition-colors">{step.label}</div>
-                <div className="text-zinc-500 text-sm">{step.text}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
+      {/* SECTION 03: THE 14-DAY CADENCE */}
+      <ProtocolSection />
 
       {/* FOOTER */}
       <footer className="relative z-10 py-32 px-6 bg-black text-center">
