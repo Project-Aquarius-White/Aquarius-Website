@@ -63,7 +63,7 @@ const options = {
                     node.properties.className = ['word--highlighted'];
                 },
             }]
-        ],
+        ] as any[],
     },
 };
 
