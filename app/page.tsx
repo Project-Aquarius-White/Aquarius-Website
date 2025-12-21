@@ -15,6 +15,7 @@ export default function Home() {
       <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-between items-center mix-blend-difference pointer-events-none">
         <div className="text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase pointer-events-auto">Project Aquarius // Protocol v1.0</div>
         <nav className="flex gap-6 pointer-events-auto">
+          <Link href="/docs/protocol" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[SOP]</Link>
           <Link href="#mission" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[MISSION]</Link>
           <Link href="#writeups" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[WRITEUPS]</Link>
           <a href="https://github.com/Project-Aquarius-White/Aquarius-Website" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[SOURCE_DETECTED]</a>
