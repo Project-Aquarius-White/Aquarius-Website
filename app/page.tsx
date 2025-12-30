@@ -41,8 +41,8 @@ export default function Home() {
           </p>
 
           <div className="pt-4 flex flex-col lg:flex-row items-center lg:items-start gap-6">
-            <Link href="/docs/protocol" className="group relative inline-flex items-center justify-center px-12 py-5 bg-white text-black font-bold tracking-widest text-sm uppercase hover:bg-aquarius-cyan transition-colors duration-300 min-h-[44px]">
-              <span>Start Protocol</span>
+            <Link href="/get-started" className="group relative inline-flex items-center justify-center px-12 py-5 bg-white text-black font-bold tracking-widest text-sm uppercase hover:bg-aquarius-cyan transition-colors duration-300 min-h-[44px]">
+              <span>Get Started</span>
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             

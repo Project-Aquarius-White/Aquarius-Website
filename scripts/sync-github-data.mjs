@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUTPUT_PATH = join(__dirname, '..', 'app', 'data', 'aquarius.generated.ts');
+const OUTPUT_DIR = join(__dirname, '..', 'app', 'data');
+const OUTPUT_PATH = join(OUTPUT_DIR, 'aquarius.generated.ts');
 
 const GITHUB_API = 'https://api.github.com';
 const ORG = process.env.GITHUB_ORG || 'Project-Aquarius-White';
@@ -330,6 +331,10 @@ async function main() {
 }
 
 function writeDataset(dataset) {
+  if (!existsSync(OUTPUT_DIR)) {
+    mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
+  
   const content = `import type { AquariusDataset } from '../../lib/schemas';
 
 export const aquariusData: AquariusDataset = ${JSON.stringify(dataset, null, 2)} as const;
