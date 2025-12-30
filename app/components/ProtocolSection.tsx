@@ -26,7 +26,7 @@ export default function ProtocolSection() {
 
             <div className="max-w-7xl mx-auto px-6 py-24 relative z-10">
                 <div className="flex justify-between items-baseline mb-16 pointer-events-none">
-                    <h2 className="text-4xl font-bold tracking-tighter mix-blend-difference">THE PROTOCOL</h2>
+                    <h2 className="text-4xl font-bold tracking-tighter">THE PROTOCOL</h2>
                     <div className="font-mono text-zinc-600 text-xs md:text-sm">CYCLE_DURATION: 336 HOURS</div>
                 </div>
 

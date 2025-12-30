@@ -35,7 +35,7 @@ export default function ParallaxLogo() {
             >
                 {/* Main Logo Layer */}
                 <div className="absolute inset-0 flex items-center justify-center transform translate-z-10">
-                    <div className="relative w-full h-full filter drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">
+                    <div className="relative w-full h-full filter drop-shadow-[0_0_4px_rgba(0,240,255,0.2)]">
                         <Image
                             src="/logo.png"
                             alt="Project Aquarius Logo"

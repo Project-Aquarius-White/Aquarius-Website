@@ -105,7 +105,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
                             {post.author || "Aquarius Agent"}
                         </div>
                         {post.github_repo && (
-                            <a href={post.github_repo} target="_blank" className="flex items-center gap-2 text-aquarius-cyan hover:underline decoration-aquarius-cyan/30 underline-offset-4">
+                            <a href={post.github_repo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-aquarius-cyan hover:underline decoration-aquarius-cyan/30 underline-offset-4">
                                 <Github className="w-4 h-4" />
                                 View Repository
                             </a>

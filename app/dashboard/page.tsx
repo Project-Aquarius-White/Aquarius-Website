@@ -3,7 +3,8 @@ import Link from "next/link";
 import { GlassPanel } from "../components/ui/GlassPanel";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { DataTable } from "../components/ui/DataTable";
-import { ArrowRight, Activity, GitCommit, Play, FileText, CheckCircle, Database } from "lucide-react";
+import { ArrowRight, Activity, GitCommit, Database, FileText, CheckCircle } from "lucide-react";
+import Header from "../components/Header";
 
 type Stage = "S1-READ" | "S2-PLAN" | "S3-CODE" | "S4-BENCH" | "S5-DOCS" | "S6-SHIP";
 
@@ -58,26 +59,17 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-aquarius-cyan selection:text-black">
       
-      <div className="fixed inset-0 z-0 opacity-[0.05] pointer-events-none bg-[url('/noise.png')] mix-blend-overlay"></div>
 
-      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-between items-center mix-blend-difference pointer-events-none">
-        <Link href="/" className="text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase pointer-events-auto hover:text-aquarius-cyan transition-colors">
-          Project Aquarius // Protocol v1.0
-        </Link>
-        <nav className="flex gap-6 pointer-events-auto">
-          <Link href="/docs/protocol" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors hidden md:block">[PROTOCOL]</Link>
-          <Link href="/dashboard" className="text-[10px] md:text-xs font-mono text-aquarius-cyan transition-colors">[MISSION STATUS]</Link>
-          <a href="https://github.com/Project-Aquarius-White/Aquarius-Website" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[REPOSITORY]</a>
-        </nav>
-      </header>
+
+      <Header activePage="/dashboard" />
 
       <main className="relative z-10 px-6 pt-32 pb-20 max-w-7xl mx-auto space-y-20">
         
         <section className="space-y-6">
-          <div className="inline-block px-3 py-1 border border-zinc-800 bg-zinc-900/50 text-zinc-400 font-mono text-[10px] tracking-widest uppercase">
+          <div className="inline-block px-3 py-1 border border-zinc-800 bg-zinc-900/50 text-zinc-400 font-mono text-xs tracking-widest uppercase">
             :: OPERATIONAL DASHBOARD
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white mix-blend-difference">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white">
             MISSION STATUS
           </h1>
           <p className="text-xl text-zinc-400 font-light max-w-2xl">
@@ -92,10 +84,10 @@ export default function DashboardPage() {
              <div className="h-[1px] flex-1 bg-zinc-900 mx-8 hidden md:block"></div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {STAGES.map((stage, i) => (
               <GlassPanel key={stage.id} className="p-4 group flex flex-col gap-3 items-start relative overflow-hidden" hover>
-                <div className="absolute top-2 right-2 text-[10px] font-mono text-zinc-700 group-hover:text-aquarius-cyan transition-colors">
+                <div className="absolute top-2 right-2 text-xs font-mono text-zinc-700 group-hover:text-aquarius-cyan transition-colors">
                   0{i + 1}
                 </div>
                 <div className="p-2 rounded-full bg-zinc-900/50 border border-zinc-800 text-zinc-500 group-hover:border-aquarius-cyan/30 group-hover:text-aquarius-cyan transition-colors">
@@ -105,12 +97,12 @@ export default function DashboardPage() {
                   <div className="font-mono text-xs font-bold text-zinc-300 group-hover:text-white transition-colors">
                     {stage.name}
                   </div>
-                  <div className="text-[10px] text-zinc-600 group-hover:text-zinc-400 transition-colors mt-1">
+                  <div className="text-xs text-zinc-600 group-hover:text-zinc-400 transition-colors mt-1">
                     {stage.desc}
                   </div>
                 </div>
                 {i < STAGES.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-[1px] bg-zinc-800 z-20"></div>
+                  <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-[1px] bg-zinc-800 z-20"></div>
                 )}
               </GlassPanel>
             ))}
@@ -120,19 +112,23 @@ export default function DashboardPage() {
         <section className="space-y-8">
            <div className="flex justify-between items-end">
              <h3 className="text-sm font-mono text-zinc-500 tracking-widest uppercase">:: ACTIVE OPERATIONS</h3>
-             <div className="text-[10px] font-mono text-zinc-600">
+             <div className="text-xs font-mono text-zinc-600">
                LAST SYNC: {new Date().toLocaleTimeString()}
              </div>
            </div>
 
-           <DataTable 
-             headers={tableHeaders} 
-             rows={tableRows} 
-             className="bg-[#0B1221]/80 backdrop-blur-md"
-           />
+           <div className="overflow-x-auto pb-2 -mx-6 px-6 md:mx-0 md:px-0">
+             <div className="min-w-[800px] md:min-w-0">
+               <DataTable 
+                 headers={tableHeaders} 
+                 rows={tableRows} 
+                 className="bg-[#0B1221]/80 backdrop-blur-md"
+               />
+             </div>
+           </div>
 
            <div className="flex justify-center pt-8">
-             <Link href="/docs/protocol" className="group inline-flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-aquarius-cyan transition-colors uppercase tracking-widest">
+             <Link href="/docs/protocol" className="group inline-flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-aquarius-cyan transition-colors uppercase tracking-widest min-h-[44px]">
                 <span>Initiate New Operation</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
              </Link>
