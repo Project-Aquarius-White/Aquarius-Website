@@ -3,12 +3,29 @@ import { GlassPanel } from './ui/GlassPanel';
 import PipelineProgress from './PipelineProgress';
 import Link from 'next/link';
 import { Activity, Clock, Database, ChevronRight } from 'lucide-react';
+import type { NormalizedProject } from '../../lib/schemas';
 
-export default function LiveOpsPreview() {
-  const operations = [
-    { project: "simple-lstm", stage: 4, status: "active", lastSync: "2m ago" },
-    { project: "attention", stage: 2, status: "pending", lastSync: "1h ago" },
-  ];
+interface LiveOpsPreviewProps {
+  operations: NormalizedProject[];
+}
+
+export default function LiveOpsPreview({ operations }: LiveOpsPreviewProps) {
+  if (operations.length === 0) {
+    return (
+      <Link href="/dashboard" className="block w-full group">
+        <GlassPanel hover className="p-6 w-full max-w-md mx-auto h-full flex flex-col justify-center items-center">
+          <div className="text-xs font-mono text-zinc-500 uppercase tracking-widest">No Active Operations</div>
+        </GlassPanel>
+      </Link>
+    );
+  }
+
+  const displayOps = operations.map((op) => ({
+    project: op.name,
+    stage: op.stage,
+    status: op.status,
+    lastSync: "synced",
+  }));
 
   return (
     <Link href="/dashboard" className="block w-full group">
@@ -26,16 +43,16 @@ export default function LiveOpsPreview() {
           <div className="flex justify-between items-end">
             <div>
               <div className="text-xs text-zinc-500 font-mono mb-1">TARGET_ID</div>
-              <div className="text-lg font-bold text-white font-mono">{operations[0].project}</div>
+              <div className="text-lg font-bold text-white font-mono">{displayOps[0].project}</div>
             </div>
             <div className="text-right">
                <div className="inline-flex items-center px-2 py-1 rounded bg-aquarius-cyan/10 border border-aquarius-cyan/20 text-aquarius-cyan text-xs font-mono uppercase tracking-wide">
-                 {operations[0].status}
+                 {displayOps[0].status}
                </div>
             </div>
           </div>
           
-          <PipelineProgress currentStage={operations[0].stage} />
+          <PipelineProgress currentStage={displayOps[0].stage} />
         </div>
 
         <div className="space-y-3 font-mono text-xs">
@@ -45,7 +62,7 @@ export default function LiveOpsPreview() {
             <span className="text-right">SYNC</span>
           </div>
           
-          {operations.map((op, i) => (
+          {displayOps.map((op, i) => (
             <div key={i} className="grid grid-cols-3 items-center px-1 text-zinc-400 group-hover/row hover:bg-white/5 py-1 rounded transition-colors">
               <span className={i === 0 ? "text-white" : ""}>{op.project}</span>
               <span className="text-center">S{op.stage}</span>

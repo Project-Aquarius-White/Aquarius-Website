@@ -5,62 +5,52 @@ import { StatusBadge } from "../components/ui/StatusBadge";
 import { DataTable } from "../components/ui/DataTable";
 import { ArrowRight, Activity, GitCommit, Database, FileText, CheckCircle } from "lucide-react";
 import Header from "../components/Header";
-
-type Stage = "S1-READ" | "S2-PLAN" | "S3-CODE" | "S4-BENCH" | "S5-DOCS" | "S6-SHIP";
-
-interface Operation {
-  id: string;
-  project: string;
-  paper: string;
-  stage: Stage;
-  status: "active" | "completed" | "pending" | "blocked";
-  lastUpdate: string;
-}
-
-const operations: Operation[] = [
-  { 
-    id: "op-001", 
-    project: "simple-lstm", 
-    paper: "Long Short-Term Memory (1997)", 
-    stage: "S4-BENCH", 
-    status: "active", 
-    lastUpdate: "2025-12-30" 
-  },
-  { 
-    id: "op-002", 
-    project: "attention-is-all-you-need", 
-    paper: "Attention Is All You Need (2017)", 
-    stage: "S2-PLAN", 
-    status: "pending", 
-    lastUpdate: "2025-12-28" 
-  },
-];
+import { aquariusData } from "../data/aquarius.generated";
 
 const STAGES = [
-  { id: "S1", name: "READ", icon: FileText, desc: "Paper Analysis" },
-  { id: "S2", name: "PLAN", icon: Database, desc: "Architecture Map" },
-  { id: "S3", name: "CODE", icon: GitCommit, desc: "Implementation" },
+  { id: "S1", name: "SPEC", icon: FileText, desc: "Paper Analysis" },
+  { id: "S2", name: "PROTO", icon: Database, desc: "Architecture Map" },
+  { id: "S3", name: "LIB", icon: GitCommit, desc: "Implementation" },
   { id: "S4", name: "BENCH", icon: Activity, desc: "Verification" },
-  { id: "S5", name: "DOCS", icon: FileText, desc: "Documentation" },
+  { id: "S5", name: "MATCH", icon: FileText, desc: "Documentation" },
   { id: "S6", name: "SHIP", icon: CheckCircle, desc: "Release" },
 ];
 
+function formatDate(isoString: string): string {
+  return isoString.split('T')[0];
+}
+
 export default function DashboardPage() {
+  const { projects, generatedAt } = aquariusData;
+  
   const tableHeaders = ["PROJECT", "PAPER", "STAGE", "STATUS", "LAST UPDATE"];
   
-  const tableRows = operations.map((op) => [
-    <span key="proj" className="font-bold text-white tracking-wide">{op.project}</span>,
-    <span key="paper" className="text-zinc-400">{op.paper}</span>,
-    <span key="stage" className="font-mono text-xs text-aquarius-cyan">{op.stage}</span>,
-    <StatusBadge key="status" status={op.status} label={op.status} />,
-    <span key="date" className="font-mono text-zinc-500">{op.lastUpdate}</span>
+  const tableRows = projects.map((project) => [
+    <a 
+      key="proj" 
+      href={project.repoUrl} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="font-bold text-white tracking-wide hover:text-aquarius-cyan transition-colors"
+    >
+      {project.name}
+    </a>,
+    <span key="paper" className="text-zinc-400">
+      {project.paper.title} ({project.paper.year})
+    </span>,
+    <span key="stage" className="font-mono text-xs text-aquarius-cyan">
+      {project.stageCode}
+    </span>,
+    <StatusBadge key="status" status={project.status} label={project.status} />,
+    <span key="date" className="font-mono text-zinc-500">
+      {formatDate(project.effectiveUpdatedAt)}
+    </span>
   ]);
+
+  const syncTime = new Date(generatedAt).toLocaleString();
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-aquarius-cyan selection:text-black">
-      
-
-
       <Header activePage="/dashboard" />
 
       <main className="relative z-10 px-6 pt-32 pb-20 max-w-7xl mx-auto space-y-20">
@@ -113,19 +103,30 @@ export default function DashboardPage() {
            <div className="flex justify-between items-end">
              <h3 className="text-sm font-mono text-zinc-500 tracking-widest uppercase">:: ACTIVE OPERATIONS</h3>
              <div className="text-xs font-mono text-zinc-600">
-               LAST SYNC: {new Date().toLocaleTimeString()}
+               LAST SYNC: {syncTime}
              </div>
            </div>
 
-           <div className="overflow-x-auto pb-2 -mx-6 px-6 md:mx-0 md:px-0">
-             <div className="min-w-[800px] md:min-w-0">
-               <DataTable 
-                 headers={tableHeaders} 
-                 rows={tableRows} 
-                 className="bg-[#0B1221]/80 backdrop-blur-md"
-               />
+           {projects.length > 0 ? (
+             <div className="overflow-x-auto pb-2 -mx-6 px-6 md:mx-0 md:px-0">
+               <div className="min-w-[800px] md:min-w-0">
+                 <DataTable 
+                   headers={tableHeaders} 
+                   rows={tableRows} 
+                   className="bg-[#0B1221]/80 backdrop-blur-md"
+                 />
+               </div>
              </div>
-           </div>
+           ) : (
+             <GlassPanel className="p-12 text-center">
+               <div className="text-zinc-500 font-mono text-sm">
+                 No active operations found.
+               </div>
+               <div className="text-zinc-600 text-xs mt-2">
+                 Repositories must have topic &apos;project-aquarius&apos; and valid aquarius.project.json
+               </div>
+             </GlassPanel>
+           )}
 
            <div className="flex justify-center pt-8">
              <Link href="/docs/protocol" className="group inline-flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-aquarius-cyan transition-colors uppercase tracking-widest min-h-[44px]">
