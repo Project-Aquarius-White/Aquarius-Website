@@ -16,6 +16,7 @@ export default function Header({ activePage }: HeaderProps) {
     { label: "[DIRECTORY]", href: "/directory" },
     { label: "[RESULTS]", href: "/results" },
     { label: "[MISSION STATUS]", href: "/dashboard" },
+    { label: "[GET STARTED]", href: "/get-started" },
   ];
 
   const githubUrl = "https://github.com/Project-Aquarius-White/Aquarius-Website";

@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# generated data (build-time)
+app/data/aquarius.generated.ts
 
 # vercel
 .vercel

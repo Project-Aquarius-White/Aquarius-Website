@@ -8,13 +8,15 @@ import Footer from "./components/Footer";
 import LiveOpsPreview from "./components/LiveOpsPreview";
 import { GlassPanel } from "./components/ui/GlassPanel";
 import { StatusBadge } from "./components/ui/StatusBadge";
+import { aquariusData } from './data/aquarius.generated';
 
 export default function Home() {
-  const featuredReproductions = [
-    { project: "simple-lstm", paper: "Long Short-Term Memory (1997)", stage: 4, status: "active" as const },
-    { project: "attention", paper: "Attention Is All You Need (2017)", stage: 2, status: "pending" as const },
-    { project: "resnet", paper: "Deep Residual Learning (2015)", stage: 6, status: "completed" as const },
-  ];
+  const featuredReproductions = aquariusData.projects.slice(0, 3).map((project) => ({
+    project: project.name,
+    paper: `${project.paper.title} (${project.paper.year})`,
+    stage: project.stage,
+    status: project.status,
+  }));
 
   return (
     <div className="flex flex-col min-h-screen font-sans selection:bg-aquarius-cyan selection:text-black bg-black text-white overflow-x-hidden">
@@ -39,8 +41,8 @@ export default function Home() {
           </p>
 
           <div className="pt-4 flex flex-col lg:flex-row items-center lg:items-start gap-6">
-            <Link href="/docs/protocol" className="group relative inline-flex items-center justify-center px-12 py-5 bg-white text-black font-bold tracking-widest text-sm uppercase hover:bg-aquarius-cyan transition-colors duration-300 min-h-[44px]">
-              <span>Start Protocol</span>
+            <Link href="/get-started" className="group relative inline-flex items-center justify-center px-12 py-5 bg-white text-black font-bold tracking-widest text-sm uppercase hover:bg-aquarius-cyan transition-colors duration-300 min-h-[44px]">
+              <span>Get Started</span>
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             
@@ -56,7 +58,7 @@ export default function Home() {
         </div>
 
         <div className="lg:col-span-5 w-full flex flex-col gap-12 relative z-10 mt-8 lg:mt-0">
-          <LiveOpsPreview />
+          <LiveOpsPreview operations={aquariusData.projects.slice(0, 2)} />
           
           <div className="w-full max-w-sm mx-auto relative grayscale hover:grayscale-0 transition-all duration-700 opacity-60 hover:opacity-100">
             <AquariusDither />
