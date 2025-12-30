@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, User, Clock, Github } from "lucide-react";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import MdxComponents from "@/app/components/mdx";
 
 export async function generateStaticParams() {
     const posts = getPostSlugs();
@@ -121,7 +122,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
             prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-lg
             prose-code:text-aquarius-cyan prose-code:bg-aquarius-cyan/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-sm prose-code:font-normal prose-code:before:content-none prose-code:after:content-none
         ">
-                    <MDXRemote source={post.content} options={options} />
+                    <MDXRemote source={post.content} options={options} components={MdxComponents} />
                 </article>
 
                 <div className="mt-24 pt-8 border-t border-zinc-900 flex justify-between items-center text-sm text-zinc-600 font-mono">

@@ -16,10 +16,11 @@ export default function Home() {
       <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-between items-center mix-blend-difference pointer-events-none">
         <div className="text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase pointer-events-auto">Project Aquarius // Protocol v1.0</div>
         <nav className="flex gap-6 pointer-events-auto">
-          <Link href="/docs/protocol" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[SOP]</Link>
-          <Link href="#mission" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[MISSION]</Link>
-          <Link href="#writeups" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[WRITEUPS]</Link>
-          <a href="https://github.com/Project-Aquarius-White/Aquarius-Website" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[SOURCE_DETECTED]</a>
+          <Link href="/docs/protocol" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[PROTOCOL]</Link>
+          <Link href="/dashboard" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[MISSION STATUS]</Link>
+          <Link href="#mission" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[ETHOS]</Link>
+          <Link href="#writeups" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[REPRODUCTIONS]</Link>
+          <a href="https://github.com/Project-Aquarius-White/Aquarius-Website" className="text-[10px] md:text-xs font-mono hover:text-aquarius-cyan transition-colors">[REPOSITORY]</a>
         </nav>
       </header>
 
@@ -33,15 +34,13 @@ export default function Home() {
         <div className="text-center space-y-8 max-w-5xl relative">
 
           <h1 className="text-5xl md:text-8xl lg:text-[9rem] font-bold tracking-tighter leading-[0.85] mix-blend-difference">
-            WEAPONIZE <br />
-            YOUR <br />
-            INTELLECT
+            REPRODUCE <br />
+            FOUNDATIONAL <br />
+            RESEARCH
           </h1>
 
           <p className="max-w-2xl mx-auto text-lg md:text-xl text-zinc-400 font-light leading-relaxed">
-            The Ivory Tower is crumbling. <br />
-            We are the salvage crew. We take State-of-the-Art research,
-            rip it from the PDF, and <span className="text-white font-medium">rebuild it from scratch.</span>
+            Bridge the gap between academic theory and production mastery by rebuilding seminal papers from scratch. <span className="text-white font-medium">Papers describe ideas; code proves understanding.</span>
           </p>
 
           <div className="pt-8 flex flex-col items-center gap-4">
@@ -50,7 +49,7 @@ export default function Home() {
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <div className="text-[10px] font-mono text-zinc-600 tracking-widest">
-              WARNING: IRREVERSIBLE COGNITIVE UPGRADE
+              STATUS: SYSTEM_READY // COGNITIVE_TRANSFER_INITIALIZED
             </div>
           </div>
         </div>
@@ -60,17 +59,15 @@ export default function Home() {
       <section className="relative z-10 py-32 px-6 border-t border-zinc-900 bg-zinc-950">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
-            <div className="inline-block px-3 py-1 border border-red-900 text-red-500 font-mono text-xs tracking-widest">
-              ERROR: COMPREHENSION_NOT_FOUND
+            <div className="inline-block px-3 py-1 border border-aquarius-cyan text-aquarius-cyan font-mono text-xs tracking-widest">
+              DIAGNOSTIC: KNOWLEDGE_GAP_DETECTED
             </div>
             <h2 className="text-4xl md:text-6xl font-bold leading-tight">
-              You didn't learn it. <br />
-              <span className="text-zinc-600">You just read it.</span>
+              Reading offers knowledge. <br />
+              <span className="text-zinc-600">Implementation builds intuition.</span>
             </h2>
             <p className="text-xl text-zinc-400 leading-relaxed">
-              Reading papers feels like learning. It's a dopamine hit. A false flag.
-              True understanding is a <span className="text-white">violent act of creation</span>.
-              It requires confronting the messy reality of missing hyperparameters, ambiguous math, and broken dependencies.
+              Tutorials skip the hard parts. Aquarius focuses on them. Confront the missing hyperparameters, ambiguous math, and <span className="text-white">hidden implementation details</span> that separate a reader from an engineer.
             </p>
           </div>
           <div className="relative aspect-square border border-zinc-900 bg-black p-8 font-mono text-xs md:text-sm text-zinc-500 flex flex-col">
@@ -93,29 +90,28 @@ export default function Home() {
       <section id="mission" className="relative z-10 py-48 bg-black scroll-mt-24">
         <div className="max-w-4xl mx-auto text-center space-y-12 px-6">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
-            "CREDENTIALS ARE FIAT.<br />
-            <span className="text-aquarius-cyan">CODE IS GOLD.</span>"
+            THE METHODOLOGY
           </h2>
           <div className="grid md:grid-cols-3 gap-8 text-left py-12">
             <div className="space-y-4">
               <div className="w-10 h-1 bg-zinc-800"></div>
-              <h3 className="font-bold text-white">Sovereignty</h3>
+              <h3 className="font-bold text-white">First Principles</h3>
               <p className="text-zinc-500 text-sm">
-                Don't wait for a lab to hire you. Build the lab yourself. Your GitHub is your territory.
+                Don't just import libraries. Build architectures from the ground up to understand why they work, not just how to run them.
               </p>
             </div>
             <div className="space-y-4">
               <div className="w-10 h-1 bg-zinc-800"></div>
-              <h3 className="font-bold text-white">Proof of Work</h3>
+              <h3 className="font-bold text-white">Production Standards</h3>
               <p className="text-zinc-500 text-sm">
-                A degree says you promised to study. A reproduction proves you delivered.
+                Follow a rigorous 14-day pipeline. Move from raw PDF to verified, production-ready codebase with test coverage and benchmarks.
               </p>
             </div>
             <div className="space-y-4">
               <div className="w-10 h-1 bg-zinc-800"></div>
-              <h3 className="font-bold text-white">Access</h3>
+              <h3 className="font-bold text-white">Deep Mastery</h3>
               <p className="text-zinc-500 text-sm">
-                We bring high knowledge down from the tower. We distribute wisdom to the worthy.
+                A portfolio of verified reproductions signals competence better than any credential. Prove you can execute complex systems.
               </p>
             </div>
           </div>
@@ -131,14 +127,14 @@ export default function Home() {
       <footer className="relative z-10 py-32 px-6 bg-black text-center">
         <div className="max-w-2xl mx-auto space-y-8">
           <h2 className="text-2xl font-bold text-zinc-700 uppercase tracking-widest">
-            End of Transmission
+            System Status: Online
           </h2>
           <div className="flex justify-center gap-8">
             <Link href="/docs/protocol" className="text-4xl md:text-6xl font-bold hover:text-aquarius-cyan transition-colors">
-              START
+              REPRODUCE
             </Link>
             <a href="https://github.com/Project-Aquarius-White" className="text-4xl md:text-6xl font-bold hover:text-aquarius-cyan transition-colors">
-              FORK
+              CONTRIBUTE
             </a>
           </div>
         </div>

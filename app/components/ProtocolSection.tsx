@@ -9,11 +9,11 @@ export default function ProtocolSection() {
     const [activeStep, setActiveStep] = useState<ProtocolStep>(null);
 
     const steps = [
-        { day: "01", id: "INTAKE", label: "INTAKE", text: "Signal extraction." },
-        { day: "02", id: "SIM", label: "SIM", text: "Math -> Logic." },
-        { day: "04", id: "BUILD", label: "BUILD", text: "Logic -> Code." },
-        { day: "08", id: "HUNT", label: "HUNT", text: "Validate on data." },
-        { day: "12", id: "SHIP", label: "SHIP", text: "Broadcast results." },
+        { day: "01", id: "INTAKE", label: "DE-NOISE", text: "Isolate the core innovation from academic signaling." },
+        { day: "02", id: "SIM", label: "MAP", text: "Translate mathematical notation into tensor logic." },
+        { day: "04", id: "BUILD", label: "IMPLEMENT", text: "Clean-room build with rigorous component testing." },
+        { day: "08", id: "HUNT", label: "VERIFY", text: "Empirical validation against paper benchmarks." },
+        { day: "12", id: "SHIP", label: "DISTILL", text: "Institutionalize knowledge through technical retrospectives." },
     ];
 
     return (
