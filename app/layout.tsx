@@ -22,8 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${jetbrainsMono.variable} antialiased min-h-screen bg-black text-white relative`}>
-        {/* CRT Scanline Overlay from globals.css */}
-        <div className="scanlines fixed inset-0 z-50 pointer-events-none" />
+
 
 
 

@@ -15,13 +15,13 @@ export default function AquariusDither() {
         let time = 0;
 
         const resize = () => {
-            // High DPI rendering
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
 
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;
 
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.scale(dpr, dpr);
             canvas.style.width = `${rect.width}px`;
             canvas.style.height = `${rect.height}px`;

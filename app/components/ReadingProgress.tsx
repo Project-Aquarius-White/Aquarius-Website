@@ -12,7 +12,7 @@ export default function ReadingProgress() {
 
     return (
         <motion.div
-            className="fixed top-0 left-0 right-0 h-1 bg-aquarius-cyan origin-left z-50 mix-blend-difference"
+            className="fixed top-0 left-0 right-0 h-1 bg-aquarius-cyan origin-left z-50"
             style={{ scaleX }}
         />
     );

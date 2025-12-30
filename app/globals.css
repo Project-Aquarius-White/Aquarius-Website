@@ -4,8 +4,34 @@
 @tailwind utilities;
 
 :root {
-  --background: #050505;
-  --foreground: #e0e0e0;
+  --bg-void: #030303;
+  --bg-surface: #0a0a0a;
+  --bg-elevated: #111111;
+  
+  --border-subtle: #1a1a1a;
+  --border-default: #27272a;
+  --border-active: #00f0ff;
+  
+  --text-primary: #ededed;
+  --text-secondary: #a1a1aa;
+  --text-dim: #52525b;
+  
+  --accent-cyan: #00f0ff;
+  --accent-error: #ef4444;
+  --accent-warn: #f59e0b;
+  --accent-success: #10b981;
+  
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+
+  --background: var(--bg-void);
+  --foreground: var(--text-primary);
 }
 
 body {
@@ -30,31 +56,7 @@ body {
   background: #00f0ff;
 }
 
-/* CRT Scanline Overlay */
-.scanlines::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(18, 16, 16, 0) 50%,
-    rgba(0, 0, 0, 0.25) 50%
-  );
-  background-size: 100% 4px;
-  z-index: 50;
-  pointer-events: none;
-  animation: scanline 10s linear infinite;
-  opacity: 0.6;
-}
 
-@keyframes scanline {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(4px); }
-}
 
 /* Utility for text selection */
 ::selection {

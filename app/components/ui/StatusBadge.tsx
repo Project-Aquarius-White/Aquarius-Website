@@ -38,7 +38,7 @@ export function StatusBadge({ status, label, className }: StatusBadgeProps) {
       )}
     >
       <span className="relative flex h-2 w-2">
-        <span className={cn("absolute inline-flex h-full w-full animate-pulse rounded-full opacity-75", dotStyles[status])}></span>
+        <span className={cn("absolute inline-flex h-full w-full rounded-full opacity-75", dotStyles[status], status === 'pending' && "animate-pulse")}></span>
         <span className={cn("relative inline-flex rounded-full h-2 w-2", dotStyles[status])}></span>
       </span>
       {label}
