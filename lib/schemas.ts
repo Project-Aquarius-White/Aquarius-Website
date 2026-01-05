@@ -48,10 +48,30 @@ export const ContextSchema = z.object({
   task: z.string().optional(),
   dataset: z.string().optional(),
   model: z.string().optional(),
-  hardware: z.string().optional(),
+  backend: z.string().optional(),
   software: z.string().optional(),
   seed: z.number().optional(),
+  python_version: z.string().optional(),
+  session_date: z.string().optional(),
 }).optional();
+
+export const HardwareSchema = z.object({
+  model: z.string().optional(),
+  chip: z.string().optional(),
+  cores: z.string().optional(),
+  memory: z.string().optional(),
+  gpu: z.string().optional(),
+  os: z.string().optional(),
+}).optional();
+
+export const ExperimentSchema = z.object({
+  section: z.string().optional(),
+  status: z.string(),
+  paper_criterion: z.string().optional(),
+  result: z.record(z.string(), z.unknown()).optional(),
+  hyperparameters: z.record(z.string(), z.unknown()).optional(),
+  notes: z.string().optional(),
+});
 
 export const ResultArtifactSchema = z.object({
   schema_version: z.string().regex(/^\d+\.\d+\.\d+$/, 'Must be semver (e.g., 1.0.0)'),
@@ -62,6 +82,8 @@ export const ResultArtifactSchema = z.object({
   metrics: MetricsSchema,
   context: ContextSchema,
   provenance: ProvenanceSchema,
+  hardware: HardwareSchema,
+  experiments: z.record(z.string(), ExperimentSchema).optional(),
   artifacts: z.array(z.object({
     type: z.string(),
     url: z.string().url().optional(),
@@ -124,6 +146,28 @@ export interface NormalizedResult {
     commitSha: string | null;
     branch: string | null;
   } | null;
+  hardware: {
+    model?: string;
+    chip?: string;
+    cores?: string;
+    memory?: string;
+    gpu?: string;
+    os?: string;
+  } | null;
+  context: {
+    backend?: string;
+    pythonVersion?: string;
+    seed?: number;
+    sessionDate?: string;
+  } | null;
+  experiments: Record<string, {
+    section?: string | null;
+    status: string;
+    paperCriterion?: string | null;
+    result?: Record<string, unknown> | null;
+    hyperparameters?: Record<string, unknown> | null;
+    notes?: string | null;
+  }> | null;
 }
 
 export interface AquariusDataset {

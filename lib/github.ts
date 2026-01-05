@@ -182,6 +182,30 @@ export async function fetchAquariusData(org: string, token?: string): Promise<Aq
                 commitSha: artifact.provenance.commit_sha ?? null,
                 branch: artifact.provenance.branch ?? null,
               } : null,
+              hardware: artifact.hardware ? {
+                model: artifact.hardware.model,
+                chip: artifact.hardware.chip,
+                cores: artifact.hardware.cores,
+                memory: artifact.hardware.memory,
+                gpu: artifact.hardware.gpu,
+                os: artifact.hardware.os,
+              } : null,
+              context: artifact.context ? {
+                backend: artifact.context.backend,
+                pythonVersion: artifact.context.python_version,
+                seed: artifact.context.seed,
+                sessionDate: artifact.context.session_date,
+              } : null,
+              experiments: artifact.experiments ? Object.fromEntries(
+                Object.entries(artifact.experiments).map(([key, exp]) => [key, {
+                  section: exp.section,
+                  status: exp.status,
+                  paperCriterion: exp.paper_criterion,
+                  result: exp.result as Record<string, unknown> | undefined,
+                  hyperparameters: exp.hyperparameters as Record<string, unknown> | undefined,
+                  notes: exp.notes,
+                }])
+              ) : null,
             });
           }
         } catch {
@@ -204,6 +228,9 @@ export async function fetchAquariusData(org: string, token?: string): Promise<Aq
           source: 'manifest_fallback',
           result: inferResultStatus(r.metrics as Record<string, number | string | boolean>),
           provenance: null,
+          hardware: null,
+          context: null,
+          experiments: null,
         });
       }
     }

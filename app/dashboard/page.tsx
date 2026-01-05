@@ -3,7 +3,7 @@ import Link from "next/link";
 import { GlassPanel } from "../components/ui/GlassPanel";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { DataTable } from "../components/ui/DataTable";
-import { ArrowRight, Activity, GitCommit, Database, FileText, CheckCircle } from "lucide-react";
+import { ArrowRight, Activity, GitCommit, Database, FileText, CheckCircle, Github } from "lucide-react";
 import Header from "../components/Header";
 import { aquariusData } from "../data/aquarius.generated";
 
@@ -26,15 +26,23 @@ export default function DashboardPage() {
   const tableHeaders = ["PROJECT", "PAPER", "STAGE", "STATUS", "LAST UPDATE"];
   
   const tableRows = projects.map((project) => [
-    <a 
-      key="proj" 
-      href={project.repoUrl} 
-      target="_blank" 
-      rel="noopener noreferrer"
-      className="font-bold text-white tracking-wide hover:text-aquarius-cyan transition-colors"
-    >
-      {project.name}
-    </a>,
+    <div key="proj" className="flex items-center gap-2">
+      <Link 
+        href={`/results?project=${project.projectId}`}
+        className="font-bold text-white tracking-wide hover:text-aquarius-cyan transition-colors"
+      >
+        {project.name}
+      </Link>
+      <a
+        href={project.repoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-zinc-600 hover:text-zinc-400 transition-colors"
+        title="View on GitHub"
+      >
+        <Github size={14} />
+      </a>
+    </div>,
     <span key="paper" className="text-zinc-400">
       {project.paper.title} ({project.paper.year})
     </span>,

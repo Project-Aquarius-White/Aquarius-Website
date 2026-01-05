@@ -266,6 +266,30 @@ async function main() {
                 commitSha: artifact.provenance.commit_sha ?? null,
                 branch: artifact.provenance.branch ?? null,
               } : null,
+              hardware: artifact.hardware ? {
+                model: artifact.hardware.model ?? null,
+                chip: artifact.hardware.chip ?? null,
+                cores: artifact.hardware.cores ?? null,
+                memory: artifact.hardware.memory ?? null,
+                gpu: artifact.hardware.gpu ?? null,
+                os: artifact.hardware.os ?? null,
+              } : null,
+              context: artifact.context ? {
+                backend: artifact.context.backend ?? null,
+                pythonVersion: artifact.context.python_version ?? null,
+                seed: artifact.context.seed ?? null,
+                sessionDate: artifact.context.session_date ?? null,
+              } : null,
+              experiments: artifact.experiments ? Object.fromEntries(
+                Object.entries(artifact.experiments).map(([key, exp]) => [key, {
+                  section: exp.section ?? null,
+                  status: exp.status,
+                  paperCriterion: exp.paper_criterion ?? null,
+                  result: exp.result ?? null,
+                  hyperparameters: exp.hyperparameters ?? null,
+                  notes: exp.notes ?? null,
+                }])
+              ) : null,
             });
           }
         } catch (err) {
@@ -289,6 +313,9 @@ async function main() {
           source: 'manifest_fallback',
           result: inferResultStatus(r.metrics),
           provenance: null,
+          hardware: null,
+          context: null,
+          experiments: null,
         });
       }
     }
