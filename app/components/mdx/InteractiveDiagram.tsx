@@ -50,8 +50,8 @@ export default function InteractiveDiagram({ id, title, height = "400px", childr
             </div>
             <div 
                 id={id} 
-                style={{ height }} 
-                className="w-full relative bg-zinc-950 flex flex-col items-center justify-center overflow-visible"
+                style={{ minHeight: height }} 
+                className="w-full relative bg-zinc-950 flex flex-col h-auto"
             >
                 {renderVisualization()}
             </div>

@@ -6,7 +6,7 @@ import { Play, Pause, RotateCcw, Info } from 'lucide-react';
 
 export default function LSTM1997CellViz() {
     const [step, setStep] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(true);
     const [showLabels, setShowLabels] = useState(true);
 
     React.useEffect(() => {
@@ -14,17 +14,17 @@ export default function LSTM1997CellViz() {
         if (isPlaying) {
             interval = setInterval(() => {
                 setStep(prev => (prev + 1) % 5);
-            }, 2000);
+            }, 2500); 
         }
         return () => clearInterval(interval);
     }, [isPlaying]);
 
     const stepLabels = [
-        { title: 'Input Arrives', desc: 'net_c enters the cell' },
-        { title: 'g() Squash', desc: 'Input squashed to [-2, 2]' },
-        { title: 'Input Gate', desc: 'y_in controls what enters' },
-        { title: 'CEC Update', desc: 's_c = s_c + (g × y_in)' },
-        { title: 'Output Gate', desc: 'y_out controls what exits' },
+        { title: 'Input Arrives', desc: 'net_c (Raw Input) enters the cell' },
+        { title: 'Squashing', desc: 'Input g(x) squashes data to [-2, 2]' },
+        { title: 'Input Gating', desc: 'Input Gate decides what to keep' },
+        { title: 'CEC Update', desc: 'Error Carousel updates state' },
+        { title: 'Output Gating', desc: 'Output Gate controls read-out' },
     ];
 
     return (
@@ -55,13 +55,28 @@ export default function LSTM1997CellViz() {
                 </div>
             </div>
 
-            <div className="flex-1 relative border border-zinc-800 bg-zinc-900/30 rounded-lg flex items-center justify-center overflow-hidden p-4">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]" />
+            {/* Render Equation OUTSIDE SVG for crisp text */}
+            <div className="flex justify-center mb-8">
+                 <div className="px-6 py-3 bg-zinc-900/80 border border-zinc-800 rounded-lg shadow-xl backdrop-blur-sm">
+                    <div className="text-lg md:text-xl text-white font-mono font-bold tracking-wider flex items-center gap-3">
+                        <span>s_c(t)</span>
+                        <span className="text-zinc-500">=</span>
+                        <span>s_c(t-1)</span>
+                        <span className="text-aquarius-cyan">+</span>
+                        <span className="text-zinc-300">g(net_c)</span>
+                        <span className="text-zinc-500">·</span>
+                        <span className="text-emerald-400">y_in</span>
+                    </div>
+                 </div>
+            </div>
 
-                <svg viewBox="0 0 700 320" className="w-full max-w-3xl h-auto relative z-10">
+            <div className="flex-1 relative border border-zinc-800 bg-zinc-900/30 rounded-lg flex items-center justify-center p-2 sm:p-4">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] rounded-lg" />
+
+                <svg viewBox="0 0 1100 480" className="w-full h-auto max-h-[80vh] relative z-10">
                     <defs>
                         <marker id="arrowBlack" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                            <path d="M0,0 L6,3 L0,6" fill="#a1a1aa" />
+                            <path d="M0,0 L6,3 L0,6" fill="#71717a" />
                         </marker>
                         <marker id="arrowCyan" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                             <path d="M0,0 L6,3 L0,6" fill="#00f0ff" />
@@ -69,145 +84,196 @@ export default function LSTM1997CellViz() {
                     </defs>
 
                     {/* Main Cell Bounding Box */}
-                    <rect x="120" y="30" width="460" height="200" rx="8" fill="none" stroke="#3f3f46" strokeWidth="2" />
+                    <rect x="180" y="20" width="740" height="280" rx="20" fill="none" stroke="#3f3f46" strokeWidth="2" strokeDasharray="6 6" strokeOpacity="0.5" />
+                    <text x="210" y="60" className="text-xl fill-zinc-700 font-mono uppercase tracking-widest font-bold">Memory Cell Block</text>
                     
-                    {/* CEC Equation at top */}
-                    <text x="350" y="55" textAnchor="middle" className="text-sm fill-white font-mono font-bold">
-                        s_c = s_c + g·y^in
-                    </text>
-
+                    {/* --- LEFT SIDE: INPUT & SQUASH --- */}
+                    
                     {/* Input Arrow (net_c) */}
                     <motion.path 
-                        d="M 40 130 L 120 130" 
+                        d="M 20 160 L 180 160" 
                         stroke={step === 0 ? '#00f0ff' : '#52525b'} 
-                        strokeWidth="2" 
+                        strokeWidth="3" 
                         markerEnd={step === 0 ? 'url(#arrowCyan)' : 'url(#arrowBlack)'} 
                         animate={{ opacity: step === 0 ? 1 : 0.5 }}
                     />
-                    {showLabels && <text x="20" y="110" className="text-[10px] fill-zinc-400 font-mono">net_c</text>}
-                    {showLabels && <text x="20" y="160" className="text-[10px] fill-zinc-500 font-mono">W_c @ x</text>}
+                    {showLabels && (
+                        <g>
+                            <text x="50" y="140" className="text-base fill-zinc-300 font-mono font-bold">Raw Input</text>
+                            <text x="50" y="155" className="text-xs fill-zinc-500 font-mono">net_c</text>
+                        </g>
+                    )}
 
                     {/* g() Squash Circle */}
                     <motion.circle 
-                        cx="160" cy="130" r="25" 
+                        cx="250" cy="160" r="40" 
                         fill="#09090b" 
                         stroke={step === 1 ? '#00f0ff' : '#52525b'} 
-                        strokeWidth="2"
+                        strokeWidth="3"
                         animate={{ scale: step === 1 ? 1.1 : 1 }}
                     />
-                    <text x="160" y="135" textAnchor="middle" className="text-xs fill-zinc-300 font-bold font-mono">g</text>
-                    {showLabels && <text x="160" y="175" textAnchor="middle" className="text-[9px] fill-zinc-500 font-mono">[-2, 2]</text>}
+                    <text x="250" y="165" textAnchor="middle" className="text-2xl fill-zinc-300 font-bold font-mono">g</text>
+                    
+                    {/* g() Explanation */}
+                    {showLabels && (
+                        <g transform="translate(250, 230)">
+                            <text x="0" y="0" textAnchor="middle" className="text-xs fill-aquarius-cyan font-mono font-bold">Input Squash</text>
+                            <text x="0" y="15" textAnchor="middle" className="text-[10px] fill-zinc-500 font-mono">Sigmoid/Tanh</text>
+                            <text x="0" y="28" textAnchor="middle" className="text-[10px] fill-zinc-500 font-mono">Range: [-2, 2]</text>
+                        </g>
+                    )}
+
+                    {/* Line from g to mult */}
+                    <path d="M 290 160 L 360 160" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+
+                    {/* --- CENTER: INPUT GATE & CEC --- */}
+
+                    {/* Input Gate (y_in) - Bottom Left */}
+                    <motion.circle 
+                        cx="390" cy="350" r="30" 
+                        fill="#09090b" 
+                        stroke={step === 2 ? '#10b981' : '#52525b'} 
+                        strokeWidth="3"
+                        animate={{ scale: step === 2 ? 1.1 : 1 }}
+                    />
+                    <text x="390" y="355" textAnchor="middle" className="text-xl fill-emerald-500 font-bold font-mono">σ</text>
+                    <path d="M 390 320 L 390 195" stroke={step === 2 ? '#10b981' : '#52525b'} strokeWidth="3" markerEnd="url(#arrowBlack)" />
+                    
+                    {/* Input Gate Explanation */}
+                    {showLabels && (
+                        <g transform="translate(390, 410)">
+                            <text x="0" y="0" textAnchor="middle" className="text-sm fill-emerald-400 font-mono font-bold">Input Gate</text>
+                            <text x="0" y="15" textAnchor="middle" className="text-xs fill-zinc-500 font-mono">"Write" Permission</text>
+                        </g>
+                    )}
+
+                    {/* Input Gate inputs */}
+                    <path d="M 340 430 L 380 375" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+                    <path d="M 390 430 L 390 380" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+                    <path d="M 440 430 L 400 375" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
 
                     {/* Multiplication node (g * y_in) */}
                     <motion.circle 
-                        cx="250" cy="130" r="15" 
+                        cx="390" cy="160" r="25" 
                         fill="#09090b" 
                         stroke={step === 2 ? '#00f0ff' : '#52525b'} 
-                        strokeWidth="2"
+                        strokeWidth="3"
                         animate={{ scale: step === 2 ? 1.15 : 1 }}
                     />
-                    <text x="250" y="135" textAnchor="middle" className="text-sm fill-white font-bold">×</text>
-                    {showLabels && <text x="250" y="110" textAnchor="middle" className="text-[9px] fill-zinc-500 font-mono">g·y^in</text>}
-
-                    {/* Line from g to mult */}
-                    <path d="M 185 130 L 235 130" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
-
-                    {/* Input Gate (y_in) - coming from below */}
-                    <motion.circle 
-                        cx="250" cy="220" r="20" 
-                        fill="#09090b" 
-                        stroke={step === 2 ? '#10b981' : '#52525b'} 
-                        strokeWidth="2"
-                        animate={{ scale: step === 2 ? 1.1 : 1 }}
-                    />
-                    <text x="250" y="224" textAnchor="middle" className="text-xs fill-emerald-500 font-bold font-mono">σ</text>
-                    {showLabels && <text x="250" y="260" textAnchor="middle" className="text-[9px] fill-zinc-500 font-mono">y^in</text>}
-                    <path d="M 250 200 L 250 145" stroke={step === 2 ? '#10b981' : '#52525b'} strokeWidth="2" markerEnd="url(#arrowBlack)" />
-
-                    {/* Input Gate inputs */}
-                    <path d="M 200 280 L 240 235" stroke="#52525b" strokeWidth="1.5" markerEnd="url(#arrowBlack)" />
-                    <path d="M 250 280 L 250 240" stroke="#52525b" strokeWidth="1.5" markerEnd="url(#arrowBlack)" />
-                    <path d="M 300 280 L 260 235" stroke="#52525b" strokeWidth="1.5" markerEnd="url(#arrowBlack)" />
-                    {showLabels && <text x="250" y="295" textAnchor="middle" className="text-[8px] fill-zinc-600 font-mono">W_in</text>}
-
-                    {/* CEC Addition Node */}
-                    <motion.circle 
-                        cx="350" cy="130" r="20" 
-                        fill="#09090b" 
-                        stroke={step === 3 ? '#10b981' : '#52525b'} 
-                        strokeWidth="3"
-                        animate={{ scale: step === 3 ? 1.15 : 1 }}
-                    />
-                    <text x="350" y="138" textAnchor="middle" className="text-lg fill-emerald-500 font-bold">+</text>
-                    
-                    {/* CEC Self-loop (1.0) */}
-                    <path d="M 350 110 C 350 80, 380 80, 380 105" fill="none" stroke={step === 3 ? '#10b981' : '#52525b'} strokeWidth="2" />
-                    <text x="375" y="90" className="text-[10px] fill-emerald-400 font-bold font-mono">1.0</text>
+                    <text x="390" y="168" textAnchor="middle" className="text-xl fill-white font-bold">×</text>
                     
                     {/* Line from mult to add */}
-                    <path d="M 265 130 L 330 130" stroke={step === 3 ? '#10b981' : '#52525b'} strokeWidth="2" markerEnd="url(#arrowBlack)" />
+                    <path d="M 415 160 L 515 160" stroke={step === 3 ? '#10b981' : '#52525b'} strokeWidth="3" markerEnd="url(#arrowBlack)" />
+
+                    {/* CEC Addition Node (CENTERPIECE) */}
+                    <motion.circle 
+                        cx="550" cy="160" r="45" 
+                        fill="#09090b" 
+                        stroke={step === 3 ? '#10b981' : '#52525b'} 
+                        strokeWidth="5"
+                        animate={{ scale: step === 3 ? 1.15 : 1 }}
+                        className="drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                    />
+                    <text x="550" y="172" textAnchor="middle" className="text-5xl fill-emerald-500 font-bold">+</text>
+                    
+                    {/* CEC Self-loop (1.0) */}
+                    <path d="M 550 115 C 550 50, 620 50, 620 100" fill="none" stroke={step === 3 ? '#10b981' : '#52525b'} strokeWidth="4" markerEnd="url(#arrowCyan)" />
+                    <rect x="580" y="60" width="50" height="25" rx="6" fill="#09090b" stroke="#10b981" />
+                    <text x="605" y="77" textAnchor="middle" className="text-sm fill-emerald-400 font-bold font-mono">1.0</text>
+                    
+                    {/* CEC Label */}
+                    {showLabels && (
+                         <g transform="translate(550, 240)">
+                            <text x="0" y="0" textAnchor="middle" className="text-base fill-white font-mono font-bold tracking-widest">CEC</text>
+                            <text x="0" y="18" textAnchor="middle" className="text-xs fill-zinc-500 font-mono">Constant Error Carousel</text>
+                            <text x="0" y="32" textAnchor="middle" className="text-xs fill-zinc-600 font-mono">The Heart of LSTM</text>
+                        </g>
+                    )}
+
+                    {/* Line from add to h */}
+                    <path d="M 595 160 L 670 160" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+
+                    {/* --- RIGHT SIDE: OUTPUT SQUASH & GATE --- */}
 
                     {/* h() Squash Circle */}
                     <motion.circle 
-                        cx="440" cy="130" r="25" 
+                        cx="710" cy="160" r="40" 
                         fill="#09090b" 
                         stroke={step === 4 ? '#f59e0b' : '#52525b'} 
-                        strokeWidth="2"
+                        strokeWidth="3"
                         animate={{ scale: step === 4 ? 1.1 : 1 }}
                     />
-                    <text x="440" y="135" textAnchor="middle" className="text-xs fill-zinc-300 font-bold font-mono">h</text>
-                    {showLabels && <text x="440" y="175" textAnchor="middle" className="text-[9px] fill-zinc-500 font-mono">[-1, 1]</text>}
+                    <text x="710" y="165" textAnchor="middle" className="text-2xl fill-zinc-300 font-bold font-mono">h</text>
                     
-                    {/* Line from add to h */}
-                    <path d="M 370 130 L 415 130" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+                    {/* h() Explanation */}
+                    {showLabels && (
+                        <g transform="translate(710, 230)">
+                            <text x="0" y="0" textAnchor="middle" className="text-xs fill-amber-500 font-mono font-bold">Output Squash</text>
+                            <text x="0" y="15" textAnchor="middle" className="text-[10px] fill-zinc-500 font-mono">Range: [-1, 1]</text>
+                        </g>
+                    )}
+
+                    {/* Line from h to mult */}
+                    <path d="M 750 160 L 825 160" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+
+                    {/* Output Gate (y_out) - Bottom Right */}
+                    <motion.circle 
+                        cx="850" cy="350" r="30" 
+                        fill="#09090b" 
+                        stroke={step === 4 ? '#f59e0b' : '#52525b'} 
+                        strokeWidth="3"
+                        animate={{ scale: step === 4 ? 1.1 : 1 }}
+                    />
+                    <text x="850" y="355" textAnchor="middle" className="text-xl fill-amber-500 font-bold font-mono">σ</text>
+                    <path d="M 850 320 L 850 195" stroke={step === 4 ? '#f59e0b' : '#52525b'} strokeWidth="3" markerEnd="url(#arrowBlack)" />
+
+                    {/* Output Gate Explanation */}
+                    {showLabels && (
+                        <g transform="translate(850, 410)">
+                            <text x="0" y="0" textAnchor="middle" className="text-sm fill-amber-400 font-mono font-bold">Output Gate</text>
+                            <text x="0" y="15" textAnchor="middle" className="text-xs fill-zinc-500 font-mono">"Read" Permission</text>
+                        </g>
+                    )}
+
+                    {/* Output Gate inputs */}
+                    <path d="M 800 430 L 840 375" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+                    <path d="M 850 430 L 850 380" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
+                    <path d="M 900 430 L 860 375" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
 
                     {/* Multiplication node (h * y_out) */}
                     <motion.circle 
-                        cx="530" cy="130" r="15" 
+                        cx="850" cy="160" r="25" 
                         fill="#09090b" 
                         stroke={step === 4 ? '#f59e0b' : '#52525b'} 
-                        strokeWidth="2"
+                        strokeWidth="3"
                         animate={{ scale: step === 4 ? 1.15 : 1 }}
                     />
-                    <text x="530" y="135" textAnchor="middle" className="text-sm fill-white font-bold">×</text>
-                    {showLabels && <text x="530" y="110" textAnchor="middle" className="text-[9px] fill-zinc-500 font-mono">h·y^out</text>}
-                    
-                    {/* Line from h to mult */}
-                    <path d="M 465 130 L 515 130" stroke="#52525b" strokeWidth="2" markerEnd="url(#arrowBlack)" />
-
-                    {/* Output Gate (y_out) - coming from below */}
-                    <motion.circle 
-                        cx="530" cy="220" r="20" 
-                        fill="#09090b" 
-                        stroke={step === 4 ? '#f59e0b' : '#52525b'} 
-                        strokeWidth="2"
-                        animate={{ scale: step === 4 ? 1.1 : 1 }}
-                    />
-                    <text x="530" y="224" textAnchor="middle" className="text-xs fill-amber-500 font-bold font-mono">σ</text>
-                    {showLabels && <text x="530" y="260" textAnchor="middle" className="text-[9px] fill-zinc-500 font-mono">y^out</text>}
-                    <path d="M 530 200 L 530 145" stroke={step === 4 ? '#f59e0b' : '#52525b'} strokeWidth="2" markerEnd="url(#arrowBlack)" />
-
-                    {/* Output Gate inputs */}
-                    <path d="M 480 280 L 520 235" stroke="#52525b" strokeWidth="1.5" markerEnd="url(#arrowBlack)" />
-                    <path d="M 530 280 L 530 240" stroke="#52525b" strokeWidth="1.5" markerEnd="url(#arrowBlack)" />
-                    <path d="M 580 280 L 540 235" stroke="#52525b" strokeWidth="1.5" markerEnd="url(#arrowBlack)" />
-                    {showLabels && <text x="530" y="295" textAnchor="middle" className="text-[8px] fill-zinc-600 font-mono">W_out</text>}
+                    <text x="850" y="168" textAnchor="middle" className="text-xl fill-white font-bold">×</text>
 
                     {/* Output Arrow (y_c) */}
                     <motion.path 
-                        d="M 545 130 L 660 130" 
+                        d="M 875 160 L 1050 160" 
                         stroke={step === 4 ? '#00f0ff' : '#52525b'} 
-                        strokeWidth="2" 
+                        strokeWidth="3" 
                         markerEnd={step === 4 ? 'url(#arrowCyan)' : 'url(#arrowBlack)'}
                         animate={{ opacity: step === 4 ? 1 : 0.5 }}
                     />
-                    {showLabels && <text x="680" y="135" className="text-[10px] fill-aquarius-cyan font-mono font-bold">y^c</text>}
+                    {showLabels && (
+                        <g>
+                            <text x="960" y="140" className="text-base fill-aquarius-cyan font-mono font-bold">Final Output</text>
+                            <text x="960" y="155" className="text-xs fill-zinc-500 font-mono">y^c</text>
+                        </g>
+                    )}
+
                 </svg>
             </div>
             
-            <div className="mt-4 p-3 bg-zinc-900/50 border border-zinc-800 rounded-lg">
-                <div className="text-xs font-mono text-zinc-400">
-                    <span className="text-aquarius-cyan">{stepLabels[step].title}:</span> {stepLabels[step].desc}
+            <div className="mt-4 p-4 bg-zinc-900/50 border border-zinc-800 rounded-lg">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-aquarius-cyan animate-pulse" />
+                    <div className="text-xs font-mono text-zinc-400">
+                        <span className="text-aquarius-cyan font-bold">{stepLabels[step].title}:</span> {stepLabels[step].desc}
+                    </div>
                 </div>
             </div>
         </div>
