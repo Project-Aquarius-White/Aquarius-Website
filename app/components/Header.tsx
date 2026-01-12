@@ -13,6 +13,7 @@ export default function Header({ activePage }: HeaderProps) {
 
   const navItems = [
     { label: "[PROTOCOL]", href: "/docs/protocol" },
+    { label: "[TRANSMISSIONS]", href: "/blog" },
     { label: "[DIRECTORY]", href: "/directory" },
     { label: "[RESULTS]", href: "/results" },
     { label: "[MISSION STATUS]", href: "/dashboard" },

@@ -6,12 +6,17 @@ import Footer from "../components/Footer";
 import { GlassPanel } from "../components/ui/GlassPanel";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import { Github, Filter } from "lucide-react";
+import { Github, Filter, BookOpen } from "lucide-react";
 import type { NormalizedProject } from "../../lib/schemas";
 
 interface DirectoryClientProps {
   projects: NormalizedProject[];
 }
+
+
+const BLOG_MAP: Record<string, string> = {
+  "simple-lstm": "rnn-to-lstm",
+};
 
 export default function DirectoryClient({ projects }: DirectoryClientProps) {
   const [stageFilter, setStageFilter] = useState("All");
@@ -137,10 +142,22 @@ export default function DirectoryClient({ projects }: DirectoryClientProps) {
                     </div>
 
                     <div className="flex justify-between items-center pt-4 border-t border-white/5">
-                      <span className="text-xs uppercase tracking-widest text-zinc-600 font-mono">Backend</span>
-                      <span className="text-xs font-mono text-aquarius-cyan bg-aquarius-cyan/10 px-2 py-1 rounded">
-                        {project.backend || 'N/A'}
-                      </span>
+                      <div className="flex gap-3 items-center">
+                         <span className="text-xs uppercase tracking-widest text-zinc-600 font-mono">Backend</span>
+                         <span className="text-xs font-mono text-aquarius-cyan bg-aquarius-cyan/10 px-2 py-1 rounded">
+                           {project.backend || 'N/A'}
+                         </span>
+                      </div>
+                      
+                      {BLOG_MAP[project.projectId] && (
+                        <a 
+                          href={`/blog/${BLOG_MAP[project.projectId]}`}
+                          className="flex items-center gap-2 text-xs font-mono text-aquarius-cyan hover:text-white transition-colors"
+                        >
+                          <BookOpen size={14} />
+                          READ
+                        </a>
+                      )}
                     </div>
                   </div>
                 </GlassPanel>

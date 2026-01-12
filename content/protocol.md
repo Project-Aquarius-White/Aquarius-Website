@@ -2,7 +2,7 @@
 title: "The Aquarius Protocol: A Framework for SOTA Reproduction"
 date: "2025-12-30"
 description: "A systematic standard operating procedure for rebuilding State-of-the-Art research from scratch."
-author: "The Warlord"
+author: "Aban Hasan"
 github_repo: "https://github.com/Project-Aquarius-White"
 ---
 

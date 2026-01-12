@@ -10,7 +10,7 @@ import MdxComponents from "@/app/components/mdx";
 export async function generateStaticParams() {
     const posts = getPostSlugs();
     return posts.map((post) => ({
-        slug: post.replace(/\.md$/, ''),
+        slug: post.replace(/\.(md|mdx)$/, ''),
     }));
 }
 
@@ -102,7 +102,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
                         </div>
                         <div className="flex items-center gap-2">
                             <User className="w-4 h-4" />
-                            {post.author || "Aquarius Agent"}
+                            {post.author || "Aban Hasan"}
                         </div>
                         {post.github_repo && (
                             <a href={post.github_repo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-aquarius-cyan hover:underline decoration-aquarius-cyan/30 underline-offset-4">

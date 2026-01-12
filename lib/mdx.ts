@@ -6,12 +6,18 @@ const contentDirectory = path.join(process.cwd(), 'content');
 
 export function getPostSlugs() {
     if (!fs.existsSync(contentDirectory)) return [];
-    return fs.readdirSync(contentDirectory).filter(file => file.endsWith('.md'));
+    return fs.readdirSync(contentDirectory).filter(file => 
+        file.endsWith('.md') || file.endsWith('.mdx')
+    );
 }
 
 export function getPostBySlug(slug: string, fields: string[] = []) {
-    const realSlug = slug.replace(/\.md$/, '');
-    const fullPath = path.join(contentDirectory, `${realSlug}.md`);
+    const realSlug = slug.replace(/\.(md|mdx)$/, '');
+    
+    let fullPath = path.join(contentDirectory, `${realSlug}.mdx`);
+    if (!fs.existsSync(fullPath)) {
+        fullPath = path.join(contentDirectory, `${realSlug}.md`);
+    }
 
     if (!fs.existsSync(fullPath)) return null;
 
@@ -24,7 +30,6 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
 
     const items: Items = {};
 
-    // Ensure only the minimal needed data is exposed
     fields.forEach((field) => {
         if (field === 'slug') {
             items[field] = realSlug;
