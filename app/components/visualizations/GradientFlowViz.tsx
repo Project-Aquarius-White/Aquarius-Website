@@ -81,37 +81,37 @@ export default function GradientFlowViz() {
             </div>
 
             {/* Visualization Area */}
-            <div className="flex-1 relative flex items-center justify-center border border-zinc-800 bg-zinc-900/30 rounded-lg overflow-hidden">
+            <div className="flex-1 relative flex items-center justify-center border border-zinc-800 bg-zinc-900/30 rounded-lg overflow-hidden min-h-[200px]">
                 {/* Background Grid */}
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]" />
 
-                <div className="relative z-10 flex items-center gap-4 w-full px-12">
+                <div className="relative z-10 flex items-center justify-between gap-4 w-full px-4 sm:px-12 max-w-4xl mx-auto">
                     {/* Input Signal */}
                     <div className="flex flex-col items-center gap-2 flex-shrink-0">
-                         <div className="w-20 h-16 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center">
-                            <span className="font-mono text-xs text-zinc-400">Step 1</span>
+                         <div className="w-16 h-12 sm:w-20 sm:h-16 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center">
+                            <span className="font-mono text-[10px] sm:text-xs text-zinc-400">Step 1</span>
                          </div>
-                         <div className="h-20 w-2 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                         <span className="font-mono text-xs text-emerald-500">1.0</span>
+                         <div className="h-16 sm:h-20 w-1.5 sm:w-2 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                         <span className="font-mono text-[10px] sm:text-xs text-emerald-500">1.0</span>
                     </div>
 
                     {/* Arrow Flow */}
-                    <div className="flex-1 h-px bg-zinc-800 relative min-w-[100px]">
+                    <div className="flex-1 h-px bg-zinc-800 relative mx-4">
                         <motion.div 
                             className="absolute top-1/2 left-0 h-0.5 bg-aquarius-cyan shadow-[0_0_10px_rgba(0,240,255,0.8)] -translate-y-1/2"
                             initial={{ width: "0%" }}
                             animate={{ width: "100%" }}
                             transition={{ duration: 0.5 }}
                         />
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-zinc-950 px-2 py-1 text-[10px] sm:text-xs font-mono text-zinc-500 border border-zinc-800 rounded whitespace-nowrap z-20">
-                            x {weight.toFixed(1)} ^ {timesteps}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-zinc-950 px-3 py-1.5 text-[10px] sm:text-xs font-mono text-zinc-400 border border-zinc-800 rounded-full whitespace-nowrap z-20 shadow-xl">
+                            <span className="text-zinc-600">×</span> {weight.toFixed(2)} <span className="text-zinc-600">^</span> {timesteps}
                         </div>
                     </div>
 
                     {/* Output Signal */}
                     <div className="flex flex-col items-center gap-2 flex-shrink-0">
-                         <div className="w-20 h-16 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center">
-                            <span className="font-mono text-xs text-zinc-400">Step {timesteps}</span>
+                         <div className="w-16 h-12 sm:w-20 sm:h-16 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center">
+                            <span className="font-mono text-[10px] sm:text-xs text-zinc-400">Step {timesteps}</span>
                          </div>
                          
                          {/* Dynamic Bar */}

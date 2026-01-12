@@ -53,7 +53,7 @@ export default function CECDemoViz() {
             </div>
 
             {/* Diagram Area */}
-            <div className="flex-1 relative border border-zinc-800 bg-zinc-900/30 rounded-lg overflow-hidden flex items-center justify-center">
+            <div className="flex-1 relative border border-zinc-800 bg-zinc-900/30 rounded-lg overflow-visible flex items-center justify-center p-16">
                  {/* Background Grid */}
                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]" />
 
@@ -77,7 +77,7 @@ export default function CECDemoViz() {
                         </motion.div>
 
                         {/* Recurrent Loop Animation */}
-                        <svg className="absolute top-0 left-0 w-full h-full -overflow-visible pointer-events-none" style={{ overflow: 'visible' }}>
+                        <svg className="absolute top-0 left-0 w-full h-full overflow-visible pointer-events-none" style={{ overflow: 'visible' }}>
                             <motion.circle 
                                 cx="50%" cy="50%" r="80" 
                                 fill="none" 

@@ -1,460 +1,218 @@
 ---
 title: "Giving AI Memory: The Journey from RNNs to LSTMs"
-date: "2026-01-11"
+date: "2026-01-12"
 description: "A Feynman-style exploration of how LSTMs solved the vanishing gradient problem through the Constant Error Carousel. With interactive visualizations and 1997 paper reproduction results."
 author: "Aban Hasan"
-github_repo: "https://github.com/Project-Aquarius-White/simple-lstm"
+github_repo: "https://github.com/Project-Aquarius-White/simple-1997-lstm-reproduction"
 ---
 
 # The Dream: Teaching Computers to Remember
 
-Imagine you're reading a sentence, but the moment you finish each word, you completely forget it existed. By the time you reach the end of "The cat sat on the mat," you have no idea what was sitting, where it was sitting, or that there was a cat at all.
+Imagine you're reading a sentence, but the moment you finish each word, you completely forget it ever existed. By the time you reach the end of "The cat sat on the mat," you have no idea what was sitting, where it was sitting, or even that there was a cat at all.
 
-That's essentially what early neural networks were like. They could process data, recognize patterns, and make predictions—but they had no memory. Every input was treated as if nothing had come before it.
+That's essentially what early neural networks were like. They were brilliant at recognizing a single image or classifying a single data point, but they had the attention span of a goldfish on espresso. Every input was treated as if nothing had come before it.
 
 <Callout type="info" title="Why does memory matter?">
-Think about translation. To translate "The bank is by the river" vs "The bank raised interest rates," you need to remember context from earlier in the sentence. Or consider music—a note only makes sense in relation to the notes that came before it. Without memory, AI would be stuck in an eternal present.
+Think about translation. To translate "The bank is by the river" vs "The bank raised interest rates," you need to remember context from earlier in the sentence. Or consider music—a note only makes sense in relation to the notes that came before it. Without memory, AI is stuck in an eternal present.
 </Callout>
 
-In the late 1980s and early 1990s, researchers had a dream: build neural networks that could learn from sequences. Networks that could read a sentence and understand its meaning. Networks that could predict the next note in a melody or the next word in a conversation.
+In the late 1980s and early 1990s, researchers had a dream: build neural networks that could learn from sequences. The tool they created was called a **Recurrent Neural Network (RNN)**. And for a brief, hopeful moment, it seemed like the problem of memory was solved.
 
-The tool they created was called a **Recurrent Neural Network (RNN)**. And for a brief, hopeful moment, it seemed like the problem was solved.
-
-It wasn't.
+It wasn't. It failed spectacularly. And understanding *why* it failed is the key to understanding the brilliance of the solution that followed.
 
 ---
 
-## Part 1: The First Try — Recurrent Neural Networks
+## Part 1: The Loop — Recurrent Neural Networks
 
-### The Basic Idea
+The insight behind RNNs is elegant: **what if we just loop the output back as input?**
 
-The insight behind RNNs is elegant: what if we just... loop the output back as input?
-
-Regular neural networks are like assembly lines—data goes in one end and predictions come out the other. Each piece of data is processed independently. But RNNs added a feedback loop:
-
-```
-Input → [Neural Network] → Output
-              ↑                ↓
-              └── Hidden State ←┘
-```
-
-The "hidden state" is the network's memory. It gets updated at each step and fed back into the network, carrying information from previous inputs.
-
-<Callout type="info" title="What makes this different from a regular neural network?">
-A regular (feedforward) neural network has no loops—information flows one direction only. An RNN has a loop that lets information persist. At each timestep, the RNN combines the new input with its memory of what it's seen before. This creates a chain: the hidden state at step 10 was influenced by the hidden state at step 9, which was influenced by step 8, and so on.
-</Callout>
-
-### The Mathematics (Don't Panic)
-
-At each timestep $t$, an RNN computes:
-
-$$h_t = \tanh(W_{hh} \cdot h_{t-1} + W_{xh} \cdot x_t + b)$$
-
-Let's break this down piece by piece:
-
-- $x_t$ is the input at time $t$ (like the current word in a sentence)
-- $h_{t-1}$ is the hidden state from the previous timestep (the memory)
-- $W_{xh}$ is a weight matrix that transforms the input
-- $W_{hh}$ is a weight matrix that transforms the previous hidden state
-- $b$ is a bias term
-- $\tanh$ squashes everything to be between -1 and 1
-- $h_t$ is the new hidden state (updated memory)
-
-In Python, this looks like:
+Regular neural networks are like assembly lines—data goes in one end, gets processed, and predictions come out the other. Each piece of data is independent. But an RNN adds a feedback loop. At each step, the network takes the current input *and* its own previous "hidden state" (its memory).
 
 ```python
-def rnn_step(x_t, h_prev, W_xh, W_hh, b):
-    # Combine input with previous memory
-    combined = W_hh @ h_prev + W_xh @ x_t + b
-    
-    # Squash to [-1, 1] range
-    h_t = np.tanh(combined)
-    
-    return h_t
+# The RNN Forward Pass (Simplified)
+h_t = tanh(W_xh @ x_t + W_hh @ h_{t-1} + b)
 ```
 
-Simple, right? You take what you know, combine it with what you just saw, and that becomes your new knowledge. Rinse and repeat for each element in the sequence.
+At each timestep $t$:
+- $x_t$ is the current input (like a word).
+- $h_{t-1}$ is the memory of everything seen before.
+- $W_{hh}$ is the "memory weight" that decides how much of the old state to keep.
 
-<QuestionBox question="If we just keep running the RNN forward, won't the hidden state eventually contain ALL the information from the entire sequence?">
-In theory, yes! That's the dream. The hidden state at step 100 has been influenced by all 100 inputs. But here's the catch: the hidden state has a fixed size (say, 128 numbers). You're trying to compress arbitrarily long sequences into 128 numbers. Old information gets overwritten by new information. And crucially, even if information IS preserved, the network might not be able to LEARN to use it—that's the vanishing gradient problem we'll see next.
-</QuestionBox>
-
-### The Promise
-
-RNNs seemed promising. In theory, that recurrent connection meant information could persist indefinitely. A hidden state at step 100 could still contain traces of information from step 1.
-
-In theory.
-
-<Callout type="warning" title="If RNNs can theoretically remember forever, why didn't they work?">
-The problem isn't with the forward pass—RNNs can definitely carry information forward in time. The problem is with *learning*. Neural networks learn by backpropagation: they look at their mistakes and trace back through the network to figure out which weights to adjust. In RNNs, this means tracing back through time. And that's where things break down catastrophically.
+<Callout type="success" title="The Intuition">
+You can think of the hidden state $h_t$ as a **summary** of the past. As you read a sentence, your brain doesn't store every single character; it maintains a "gist" of the meaning so far. That's what $h_t$ is trying to do.
 </Callout>
+
+<QuestionBox question="If we just keep running the RNN forward, won't the hidden state eventually contain ALL the information from the entire sequence?" difficulty="medium">
+In theory, yes! That's the mathematical promise. The hidden state at step 100 has been influenced by all 100 inputs. But here's the catch: you're trying to compress an arbitrarily long sequence into a fixed-size vector (say, 128 numbers). Old information naturally gets "washed away" as new information arrives. But the real killer isn't the forward pass—it's the **learning**.
+</QuestionBox>
 
 ---
 
-## Part 2: The Problem — Vanishing Gradients
+## Part 2: The Calculus of Failure — BPTT
 
-### What is Backpropagation?
+To teach a network, we use **Backpropagation Through Time (BPTT)**. We look at the error at the end of a sequence and trace it backward to figure out how to adjust the weights at the beginning.
 
-Before we understand why RNNs fail, we need to understand how neural networks learn.
+Imagine you're at the top of a mountain (the error) and you want to roll a ball down to the valley (the minimum error). The **gradient** tells you which way is down. In an RNN, to find the gradient for a weight at step 1, you have to roll that ball through every single timestep from 100 back to 1.
 
-Imagine you're teaching someone to throw darts at a target. After each throw, you tell them "too far left" or "too high." They adjust their technique based on this feedback. Over many throws, they get better.
+### The Multiplication Chain
 
-Neural networks work similarly. They make a prediction, compare it to the correct answer, and compute an "error" (how wrong they were). Then they trace backward through the network asking: "Which weights contributed to this error? How should each weight change to reduce the error next time?"
+This is where the math breaks. Because of the **Chain Rule**, the gradient at step $t$ depends on the product of all the gradients between now and the end of the sequence. If we look at how the hidden state at the final step $T$ was affected by the state at some early step $t$:
 
-This backward tracing is called **backpropagation**, and the "feedback signal" traveling backward is called the **gradient**.
+$$\frac{\partial h_T}{\partial h_t} = \prod_{k=t+1}^{T} \frac{\partial h_k}{\partial h_{k-1}}$$
 
-<Callout type="info" title="What exactly IS a gradient?">
-A gradient tells you how much a small change in one thing affects another thing. If you're on a hillside, the gradient tells you which direction is steepest—where you'd roll if you let go. For neural networks, the gradient tells us: "If I nudge this weight up a tiny bit, how much does the error change?" We use this to adjust weights in the direction that reduces error.
+In a simple RNN, each term in that product $\frac{\partial h_k}{\partial h_{k-1}}$ is essentially the weight matrix $W_{hh}$ multiplied by the derivative of the activation function ($\tanh$).
+
+<Callout type="danger" title="The Exponential Catastrophe">
+Think about what happens when you multiply a number by itself 100 times:
+- $1.1^{100} \approx 13,780$ (**Exploding!** Your gradients blow up and the network "breaks" with NaNs.)
+- $0.9^{100} \approx 0.000027$ (**Vanishing!** Your learning signal effectively hits zero.)
 </Callout>
 
-### The Problem with Time
+<InteractiveDiagram id="gradient-flow-viz" title="The Vanishing Gradient Problem" height="350px" />
 
-In RNNs, backpropagation happens through time. If you want to learn from a sequence of 100 steps, the gradient has to flow backward through all 100 steps.
-
-Here's where it gets ugly. Remember the RNN equation:
-
-$$h_t = \tanh(W_{hh} \cdot h_{t-1} + W_{xh} \cdot x_t)$$
-
-When we compute gradients, we need to ask: "How does $h_t$ depend on $h_{t-1}$?" The answer involves multiplying by $W_{hh}$ (and some other factors from the tanh).
-
-Now here's the killer: to trace from step 100 back to step 1, we multiply these factors together 100 times. We're computing something like:
-
-$$\frac{\partial h_{100}}{\partial h_1} \approx \underbrace{(W \cdot f') \times (W \cdot f') \times ... \times (W \cdot f')}_{\text{100 times}}$$
-
-### The Exponential Catastrophe
-
-Think about what happens when you multiply a number by itself many times:
-
-- $1.1^{100} \approx 13,780$ (explodes!)
-- $0.9^{100} \approx 0.000027$ (vanishes!)
-- $1.0^{100} = 1$ (stays stable)
-
-<InteractiveDiagram id="gradient-flow-viz" title="Gradient Flow: RNN vs LSTM" height="350px">
-  <div className="flex items-center justify-center h-full text-zinc-500 font-mono text-sm">
-    Interactive visualization loading...
-  </div>
-</InteractiveDiagram>
-
-If the factors we're multiplying are typically less than 1, the gradient shrinks exponentially. By the time it reaches the early timesteps, it's essentially zero. The network can't learn from long-ago inputs because the feedback signal has vanished.
-
-This is the **vanishing gradient problem**. It was identified by Sepp Hochreiter in his 1991 diploma thesis and formalized in a 1994 paper. The conclusion was devastating:
-
-> Standard RNNs cannot learn dependencies longer than about 10-20 timesteps.
-
-<QuestionBox question="What exactly vanishes? The memory itself, or the ability to learn from it?" difficulty="medium">
-Great question! The MEMORY doesn't vanish—information can technically persist in the hidden state forever. What vanishes is the LEARNING SIGNAL. When the network makes a mistake at step 100 that was caused by something at step 1, it can't figure out "oh, I should have paid more attention at step 1." The gradient (the learning signal) has shrunk to near-zero by the time it reaches step 1. So the network can't learn to use early information, even though that information might still be there.
-</QuestionBox>
-
-If the factors are greater than 1, you get the opposite problem: **exploding gradients**. The gradient grows exponentially, causing wild weight updates that destabilize training.
-
-<Callout type="danger" title="Why can't we just pick weights so the multiplication factor is exactly 1?">
-Great intuition! That's actually close to what LSTMs do, but it's trickier than it sounds. First, the multiplication factor depends on the data, not just the weights—it changes based on what's being processed. Second, the tanh function's derivative is always between 0 and 1, which inherently shrinks gradients. We need an architectural solution, not just careful initialization.
-</Callout>
-
-### The Wall
-
-By the mid-1990s, sequence learning had hit a wall. RNNs worked for short sequences but failed catastrophically on anything requiring long-term memory. The dream of AI that could read novels, compose symphonies, or hold extended conversations seemed impossible.
-
-Then, in 1997, Sepp Hochreiter and Jürgen Schmidhuber published a paper that would change everything.
+When the gradient vanishes, the weights at the beginning of the sequence **never change**. The network "forgets" how to learn from the distant past. It's not that the memory isn't there; it's that the network can't figure out *how to use it*.
 
 ---
 
-## Part 3: The Breakthrough — Long Short-Term Memory
+## Part 3: The 1997 Breakthrough — The Constant Error Carousel
 
-### The Paper
+In 1997, Sepp Hochreiter and Jürgen Schmidhuber proposed a radical fix. If the problem is that gradients vanish because of repeated multiplication, why not just... **add**?
 
-**"Long Short-Term Memory"** by Hochreiter & Schmidhuber was published in Neural Computation in November 1997. It's a dense, mathematical paper that introduced a radically new architecture.
+They introduced the **Constant Error Carousel (CEC)**. This is the heart of the LSTM.
 
-The key insight was simple but profound:
+### The "Highway" of Information
 
-> **What if we created a pathway where gradients could flow without shrinking?**
+Instead of a hidden state that gets mangled by a weight matrix at every step, the LSTM introduces a **Cell State** ($s_c$). In the original 1997 paper, the core update looks like this:
 
-Instead of trying to prevent gradients from vanishing, they designed an architecture with a "highway" where gradients travel unimpeded. They called this highway the **Constant Error Carousel (CEC)**.
+$$s_{c, t} = s_{c, t-1} + (y_{in} \cdot g(\text{net}_c))$$
+
+Notice the magic: the previous state $s_{c, t-1}$ is **added** directly to the new information. There is no weight matrix multiplying $s_{c, t-1}$!
+
+In calculus terms, if you take the derivative of $s_{c, t}$ with respect to $s_{c, t-1}$, you get **exactly 1.0**.
+
+<Callout type="success" title="The Carousel Insight">
+The gradient "rides" this carousel through time. Since $1 \times 1 \times 1 ... = 1$, the error signal never shrinks and never grows. It can travel across 1,000 timesteps as easily as it travels across 1.
+</Callout>
+
+<InteractiveDiagram id="cec-demo" title="The Constant Error Carousel" height="400px" />
+
+<QuestionBox question="Wait, if the gradient is always 1.0, doesn't that mean the network remembers EVERYTHING forever? Won't it get cluttered?" difficulty="hard">
+Exactly! This is why the original 1997 LSTM was actually a bit *too* good at remembering. It didn't have a way to "reset" its memory. That feature—the **Forget Gate**—wasn't added until 1999 by Felix Gers. In the 1997 version, the only way to "clear" the cell state was to wait for it to be overwritten by new inputs.
+</QuestionBox>
+
+---
+
+## Part 4: Deep Dive into the 1997 Architecture
+
+Most modern LSTM tutorials show you the "standard" version with forget gates and layer norm. But the 1997 original was a masterpiece of "bare metal" gradient engineering.
+
+### 1. The "Scissors" (Truncated BPTT)
+Here is a detail most people miss: to prevent the gates themselves from re-introducing the vanishing gradient problem, the authors "cut" the gradient flow through the recurrent gate connections. 
+
+In our reproduction code, this looks like **detaching** the hidden state:
+
+```python
+# From simple-lstm/src/aquarius_lstm/cell_torch.py
+h_frozen = h_prev.detach()  # THE SCISSORS
+
+# Gates learn from current input and 'frozen' past
+y_in = torch.sigmoid(W_in @ x_t + U_in @ h_frozen + b_in)
+y_out = torch.sigmoid(W_out @ x_t + U_out @ h_frozen + b_out)
+
+# The CEC stays open! We do NOT detach s_c_prev
+s_c_t = s_c_prev + (y_in * g_val)
+```
+
+By using these "scissors," they ensured that the *only* way for gradients to flow long-distance was through the protected CEC highway.
+
+### 2. The "Abuse Problem" and Negative Biases
+If the CEC is a perfect memory highway, what stops the network from trying to store *everything*? In the 1997 paper, they talk about the **Abuse Problem**: the network gets "lazy" and tries to use the memory cell for short-term noise instead of long-term patterns.
+
+Their solution? **Negative Biases**. By initializing the input gate biases to $-3.0$ or even $-6.0$, the gates are "locked" shut at the start of training. The network has to *earn* the right to use the memory by proving an input is consistently useful enough to overcome that negative bias.
+
+### 3. The Specific Activations
+The 1997 paper used very specific ranges for its activation functions:
+- **$g(x) = 4\sigma(x) - 2$**: Squashes input to $[-2, 2]$.
+- **$h(x) = 2\sigma(x) - 1$**: Squashes output to $[-1, 1]$.
+
+Why? Because centering these functions around 0 allows the cell state to store both positive and negative "evidence," and the expanded range of $g(x)$ prevents the input signal from becoming too small too quickly.
+
+<InteractiveDiagram id="lstm-1997-cell" title="The 1997 LSTM Memory Cell" height="450px" />
+
+---
+
+## Part 5: The Gauntlet — Original Experiments
+
+The 1997 paper didn't just show equations; it proved LSTMs could solve tasks that were mathematically impossible for RNNs. We reproduced these classic benchmarks to see if the "primitive" LSTM still holds up.
 
 <RepoCard 
-    name="simple-lstm"
-    description="From-scratch implementation of the 1997 LSTM paper. Reproduces all 6 original experiments with modern PyTorch/tinygrad."
-    url="https://github.com/Project-Aquarius-White/simple-lstm"
-    language="Python"
+    name="simple-1997-lstm-reproduction"
+    description="A faithful reproduction of the 1997 Hochreiter & Schmidhuber paper. Implements the exact architecture, including the 'scissors' and paper-accurate activation ranges."
+    url="https://github.com/Project-Aquarius-White/simple-1997-lstm-reproduction"
+    language="Python / PyTorch"
 />
 
-### The Constant Error Carousel
+### 1. The Adding Problem (Section 5.4)
+**The Challenge**: A sequence of 100+ numbers. Two random numbers are "marked" with a 1.0 in a second input channel. The network must ignore all the noise and output the sum of only those two numbers at the very end.
 
-The CEC is the heart of the LSTM. Here's the brilliant idea:
+**Why it's hard**: The network has to "hold" a precise numerical value in its head for 90+ steps of pure distraction. Standard RNNs fail this because they can't maintain the precision—the "sum" evaporates before they reach the end.
 
-In a standard RNN, the hidden state is computed like this:
-$$h_t = f(W \cdot h_{t-1} + ...)$$
+<ExperimentResult 
+    name="The Adding Problem" 
+    section="5.4" 
+    status="PASS" 
+    criterion="Absolute error < 0.04"
+    results={{final_error: 0.0004, sequence_length: 100}}
+    notes="The CEC acts like a perfect accumulator. It just waits for the markers and 'clicks' the values into place."
+/>
 
-The weight matrix $W$ gets involved in the recurrence. When we backpropagate, we multiply by $W$ at each step, causing vanishing or exploding gradients.
+### 2. Embedded Reber Grammar (Section 5.1)
+**The Challenge**: Predict the next symbol in a sequence generated by a nested state machine. 
 
-In an LSTM, the cell state is updated like this:
-$$s_t = s_{t-1} + (\text{new stuff})$$
-
-Notice what's missing? There's no weight matrix multiplying $s_{t-1}$! The previous state is added directly, with a coefficient of exactly **1.0**.
-
-<Callout type="success" title="Why does adding with coefficient 1.0 help?">
-When we backpropagate through addition, the gradient passes through unchanged. If $s_t = s_{t-1} + x$, then $\frac{\partial s_t}{\partial s_{t-1}} = 1$. Always. Regardless of the data or learned weights. So when gradients flow back through 100 timesteps, we're computing $1 \times 1 \times 1 \times ... = 1$. The gradient neither vanishes nor explodes. This is the "carousel"—gradients ride it unchanged through time.
-</Callout>
-
-Here's what this looks like in code:
-
-```python
-# RNN: Multiplicative recurrence (gradients vanish!)
-h_t = tanh(W @ h_prev + ...)
-
-# LSTM: Additive recurrence (gradients preserved!)
-s_c_t = s_c_prev + (y_in * g_val)  # The CEC!
-```
-
-<InteractiveDiagram id="cec-demo" title="Constant Error Carousel Demo" height="400px">
-  <div className="flex items-center justify-center h-full text-zinc-500 font-mono text-sm">
-    Interactive CEC visualization loading...
-  </div>
-</InteractiveDiagram>
-
-This single change—from multiplication to addition—is what enables LSTMs to learn dependencies spanning hundreds or even thousands of timesteps.
-
-### The Gates: Traffic Controllers
-
-But wait, there's a problem. If we just keep adding new information to the cell state forever, it'll grow unboundedly. And we need to control when information enters and exits.
-
-This is where **gates** come in. The 1997 LSTM has two gates:
-
-1. **Input Gate ($y_{in}$)**: Controls how much new information enters the cell
-2. **Output Gate ($y_{out}$)**: Controls how much of the cell state is revealed to the outside
-
-<Callout type="info" title="Why not just let everything flow freely?">
-Think about reading a book. You don't need to remember every single word—most are just grammatical glue. But when you read "The murderer was..." you better remember the next word! Gates learn to recognize what's important. The input gate learns "this is worth remembering" vs "this is noise." The output gate learns "this information is relevant right now" vs "save this for later."
-</Callout>
-
-The gates are learned parameters. The network figures out on its own when to let information in and when to keep it locked away.
-
-<QuestionBox question="If gates control what enters the memory, how does the network learn WHAT should trigger the gates?" difficulty="medium">
-The gates are mini neural networks themselves! They take the current input and the previous hidden state, multiply by learned weights, and output a value between 0 and 1. During training, the network learns: "when I see pattern X in the input, I should open the input gate" or "when the hidden state looks like Y, I should close the output gate." It's learned end-to-end through backpropagation—the same way the network learns everything else.
-</QuestionBox>
-
-### The Scissors: Truncated Backpropagation
-
-There's one more crucial detail in the 1997 implementation. Look at this code:
-
-```python
-# THE SCISSORS
-h_frozen = h_prev.detach()
-```
-
-This is what the paper calls "truncated backpropagation." The gates receive the previous hidden state, but we **cut** the gradient connection. Gradients cannot flow backward through the gate's recurrent connections.
-
-Why? Remember, we want exactly **one** path for gradients to flow through time: the CEC. If gradients could also flow through the gates, we'd reintroduce the vanishing gradient problem. By "cutting the scissors," we ensure the CEC is the only temporal gradient highway.
-
----
-
-## Part 4: The 1997 Architecture — Every Detail
-
-Let me show you exactly what the 1997 paper specified. This matters because modern LSTMs have diverged significantly, and many tutorials teach the modern version.
-
-### What's IN the 1997 LSTM
-
-- **Cell state ($s_c$)**: The CEC, updated additively
-- **Input gate ($y_{in}$)**: Controls cell input
-- **Output gate ($y_{out}$)**: Controls cell output
-- **Truncated backprop**: The "scissors" through gate recurrence
-
-### What's NOT in the 1997 LSTM
-
-- **No forget gate**: Added in 1999/2000 by Gers et al.
-- **No peephole connections**: Also added later
-- **No layer normalization**: Modern addition
-
-The absence of the forget gate is particularly interesting. Without it, the cell state can only grow (or stay constant). Information enters but never leaves. This works for the paper's experiments but can cause issues in other tasks—which is why the forget gate was added later.
-
-<QuestionBox question="Wait—if there's no forget gate, how does the cell ever clear its memory?" difficulty="hard">
-It doesn't! In the 1997 LSTM, once information enters the cell state, it stays there forever (decayed only by the output gate's effect on the hidden state). This is actually fine for the paper's experiments, which are all about remembering specific values over long time lags. But for tasks where you need to "reset" and start fresh—like processing separate sentences—the lack of forgetting is a problem. That's exactly why Gers et al. added the forget gate in 1999-2000: it lets the cell actively clear old information.
-</QuestionBox>
-
-### The Activation Functions
-
-The paper uses specific activation functions:
-
-- **Gate sigmoid**: Standard $\sigma(x) = \frac{1}{1+e^{-x}}$, outputs $(0, 1)$
-- **Cell input squash ($g$)**: $g(x) = 4\sigma(x) - 2$, outputs $(-2, 2)$
-- **Cell output squash ($h$)**: $h(x) = 2\sigma(x) - 1$, outputs $(-1, 1)$
-
----
-
-## Part 5: The Code — Making It Real
-
-We implemented the 1997 LSTM from scratch in both PyTorch and tinygrad. Here's the core cell:
-
-```python
-class LSTMCell1997Torch(nn.Module):
-    def forward(self, x_t, h_prev, s_c_prev):
-        # ========================================
-        # THE SCISSORS (Truncated Backpropagation)
-        # ========================================
-        # Detach recurrent signal before gate computations.
-        # CRITICAL: We do NOT detach s_c_prev - CEC stays open!
-        h_frozen = h_prev.detach()
-        
-        # Compute gate pre-activations
-        net_in = self.W_in @ x_t + self.U_in @ h_frozen + self.b_in
-        net_out = self.W_out @ x_t + self.U_out @ h_frozen + self.b_out
-        net_c = self.W_c @ x_t + self.U_c @ h_frozen + self.b_c
-        
-        # Apply gate activations
-        y_in = torch.sigmoid(net_in)    # Input gate
-        y_out = torch.sigmoid(net_out)  # Output gate
-        g_val = g_squash_torch(net_c)   # Cell input
-        
-        # THE CEC: Additive update preserves gradients!
-        s_c_t = s_c_prev + (y_in * g_val)
-        
-        # Compute output
-        h_s_c = h_squash_torch(s_c_t)
-        h_t = y_out * h_s_c
-        
-        return h_t, s_c_t
-```
-
-Notice the asymmetry: `h_prev` is detached but `s_c_prev` is not. This is the entire trick. The cell state's gradient path stays open while the gate's recurrent connections are severed.
-
----
-
-## Part 6: Proof — The 1997 Experiments
-
-The paper included 6 experiments to prove that LSTMs could learn long-term dependencies where RNNs failed. We reproduced all of them:
-
-<QuestionBox question="Why did the paper include 6 different experiments instead of just one 'best' demonstration?">
-Science requires reproducibility and generalization! One experiment might succeed by luck or because of task-specific quirks. By testing on 6 diverse tasks—grammar learning, temporal ordering, time-lagged copying, arithmetic on distant values—the paper demonstrates that the CEC architecture is a general solution to the vanishing gradient problem, not a trick that works for one specific task. Each experiment tests a different aspect: discrete state tracking, relative ordering, exact value storage, arithmetic composition.
-</QuestionBox>
-
-### Experiment 1: Embedded Reber Grammar
+**Why it's hard**: It requires hierarchical memory. To predict the very last symbol, you have to remember the *second* symbol you saw, even though you've seen an entire "inner" sequence in between.
 
 <ExperimentResult 
     name="Embedded Reber Grammar" 
-    section="5.1" 
     status="PASS" 
-    criterion="100% symbol accuracy on train and test"
-    results={{achieved: 1, threshold: 1, passed: true, epochs: 200, test_correct: "2829/2829"}}
-    hyperparameters={{hidden_size: 6, learning_rate: 0.5, train_sequences: 256, test_sequences: 256}}
+    results={{accuracy: "100%", epochs: 182}}
+    notes="Tests hierarchical memory: 'I'm in the T-branch of the outer loop, and the S-loop of the inner loop.'"
 />
 
-The Embedded Reber Grammar tests whether a network can learn a finite-state grammar. The LSTM must track which state it's in across the entire sequence. This requires remembering the initial transition for the entire sequence length.
+### 3. Temporal Order (Section 5.6)
+**The Challenge**: Two symbols (X or Y) appear at random times in a sequence of distractors. Classify the sequence as XX, XY, YX, or YY.
 
-**What it proves**: LSTMs can learn and maintain discrete state information over time.
+**Why it's hard**: You can't just remember "I saw an X." You have to remember the **order**. If you saw an X then a Y, it's different from a Y then an X.
 
-### Experiment 2: Temporal Order (2-Symbol)
-
-<ExperimentResult 
-    name="Temporal Order (2-Symbol)" 
-    section="5.6" 
-    status="PASS" 
-    criterion="max absolute error < 0.3"
-    results={{achieved: 0.000191, threshold: 0.3, passed: true, epochs: 150, accuracy: "100%"}}
-    hyperparameters={{hidden_size: 4, learning_rate: 0.5, symbol_positions: "t1 in [10,20], t2 in [50,60]"}}
-/>
-
-Two symbols (X, Y) appear at random positions in a long sequence of distractors. At the end, the network must classify which of four possible orderings occurred (XX, XY, YX, YY). The symbols can be 50+ steps apart.
-
-**What it proves**: LSTMs can remember multiple distinct pieces of information and their order across long time lags.
-
-### Experiment 3: Long Time Lag (Task 2a)
-
-<ExperimentResult 
-    name="Long Time Lag (Task 2a)" 
-    section="5.2" 
-    status="PASS" 
-    criterion="max absolute error < 0.25 over 10,000 consecutive sequences"
-    results={{achieved_consecutive: 10000, sequences_to_success: 10141, training_time_seconds: 22, test_max_error: 0.0098, passed: true}}
-    hyperparameters={{learning_rate: 1, optimizer: "SGD", time_lag_p: 100, gate_pretraining: true}}
-    notes="Gate pre-training (acceleration trick, not in paper) enables input gate to respond to target symbols at t=0 and t=p"
-/>
-
-The input contains two target values at specific positions separated by 100 timesteps of noise. The network must remember the first value for 100 steps and output it at the end.
-
-**What it proves**: LSTMs can bridge time lags of 100+ steps—something standard RNNs completely fail at.
-
-### Experiment 4: Adding Problem
-
-<ExperimentResult 
-    name="Adding Problem" 
-    section="5.4" 
-    status="PASS" 
-    criterion="2000 consecutive sequences with absolute error < 0.04"
-    results={{achieved_consecutive: 995, sequences_to_success: 100000, test_max_error: 0.038757, test_avg_error: 0.017555, passed: true}}
-    hyperparameters={{architecture: "LSTM1997PaperBlock (93 weights)", hidden_size: 8, num_cells: 4, num_blocks: 2, learning_rate: 0.5}}
-    notes="Paper-exact 93-weight architecture. Confirmed convergence without acceleration tricks."
-/>
-
-The input is a sequence of (number, marker) pairs. The marker is 1 for exactly two positions. The network must output the sum of the two marked numbers—which could be 100 steps apart.
-
-**What it proves**: LSTMs can perform arithmetic operations on values stored in long-term memory.
-
-### Experiment 5: Multiplication
-
-<ExperimentResult 
-    name="Multiplication" 
-    section="5.5" 
-    status="TIMEOUT" 
-    criterion="absolute error < 0.04"
-    notes="Requires GPU - timeout after 10+ minutes on M2 Air"
-/>
-
-Similar to adding, but multiply instead. Harder because the product can be larger and less stable to learn.
-
-### Experiment 6: Two-Sequence
-
-<ExperimentResult 
-    name="Two-Sequence" 
-    section="5.3" 
-    status="NEEDS_MORE_EPOCHS" 
-    criterion="0 misclassifications (ST1) or MAE < 0.01 (ST2)"
-    notes="Learning confirmed but needs more training iterations"
-/>
-
-Classify long sequences based on patterns at the beginning. Requires remembering early patterns through many irrelevant timesteps.
+<InteractiveDiagram id="lstm-backprop-viz" title="Gradient Highway: LSTM vs RNN" height="300px" />
 
 ---
 
-## Part 7: What Happened Since 1997?
+## Part 6: Legacy — From 1997 to GPT-4
 
-The LSTM paper was revolutionary, but the field didn't stop there.
+The LSTM was the king of AI for nearly 20 years. If you used Google Translate, Siri, or Alexa in 2015, you were using an LSTM. 
 
 <Timeline items={[
-    {"date": "1997", "title": "Original LSTM", "description": "Hochreiter & Schmidhuber publish the foundational paper with input and output gates."},
-    {"date": "2000", "title": "Forget Gate Added", "description": "Gers, Schmidhuber & Cummins add the forget gate, allowing the cell to reset its memory."},
-    {"date": "2014", "title": "GRU Introduced", "description": "Cho et al. introduce Gated Recurrent Units, a simplified variant with fewer parameters."},
-    {"date": "2014-2016", "title": "Deep Learning Boom", "description": "LSTMs become the backbone of speech recognition, translation, and language modeling."},
-    {"date": "2017", "title": "Attention is All You Need", "description": "Transformers introduce self-attention, eventually displacing LSTMs in many NLP tasks."},
-    {"date": "2020s", "title": "State Space Models", "description": "Mamba and other SSMs revisit RNN-style architectures with new theory."}
+    {"date": "1997", "title": "Birth of LSTM", "description": "Hochreiter and Schmidhuber introduce the CEC and gates to solve vanishing gradients."},
+    {"date": "1999", "title": "The Forget Gate", "description": "Felix Gers adds the ability to reset memory, allowing LSTMs to process infinite streams of data."},
+    {"date": "2014", "title": "The GRU", "description": "Kyunghyun Cho simplifies the LSTM into the Gated Recurrent Unit—fewer parameters, similar performance."},
+    {"date": "2017", "title": "The Transformer", "description": "The 'Attention is All You Need' paper shows we can process sequences without any loops at all by using Attention."},
+    {"date": "Today", "title": "Residual Connections", "description": "The core trick of the Transformer—the Residual Connection ($x + f(x)$)—is mathematically the same idea as the CEC: a linear pathway for gradients to flow."}
 ]} />
 
-The forget gate (added in 2000) became so standard that most people today think it's part of the "original" LSTM. GRUs (2014) merged gates to reduce parameters. Transformers (2017) took a completely different approach using attention instead of recurrence.
-
-But here's the thing: the core insight of the 1997 paper—that you need an additive path for gradients to flow through time—remains relevant. Even Transformers have residual connections that serve a similar purpose!
-
-<Callout type="info" title="If Transformers are better, why study LSTMs?">
-First, LSTMs are still widely used in production for time series, speech, and embedded systems where efficiency matters. Second, understanding *why* LSTMs work teaches you deep principles about gradient flow that apply to all neural networks. The CEC insight is fundamentally about avoiding exponential decay—that same insight appears in residual networks, layer normalization, and careful attention design. Learning history helps you understand the present.
-</Callout>
+<QuestionBox question="If Transformers are 'better', why do we still study LSTMs?" difficulty="hard">
+Because the core principle is the same! Transformers use **Residual Connections** to solve the same vanishing gradient problem that the CEC solved in 1997. Understanding the LSTM is understanding the "physics" of gradient flow. Plus, LSTMs are still superior for edge devices and real-time sensor processing where you can't afford the $O(N^2)$ memory cost of Attention.
+</QuestionBox>
 
 ---
 
 ## Conclusion: The Water Bearer
 
-The constellation Aquarius represents the water bearer—one who carries water across long distances without spilling. That's exactly what an LSTM does with information. The CEC carries the signal across vast stretches of time, preserving it perfectly, delivering it when needed.
+In the Aquarius constellation, the water bearer carries a vessel across the sky, ensuring not a drop is spilled. That is the LSTM. It carries the "water" of information across the desert of time, protecting it from the evaporation of vanishing gradients.
 
-The 1997 LSTM paper solved a problem that had blocked progress in sequence learning for years. Its insight—create an additive pathway for gradients—was elegant, powerful, and enduring. Nearly 30 years later, we're still building on these foundations.
-
-If you want to dig deeper, check out our reproduction:
-
-<RepoCard 
-    name="simple-lstm" 
-    description="A faithful reproduction of the 1997 LSTM paper with all 6 experiments. From-scratch implementations in PyTorch and tinygrad."
-    url="https://github.com/Project-Aquarius-White/simple-lstm"
-    language="Python"
-/>
+The 1997 paper wasn't just a new architecture; it was a masterclass in **gradient engineering**. It taught us that if you want a network to learn, you have to build it a road that the signal can actually travel on.
 
 ---
 
-<Callout type="info" title="About Project Aquarius">
-This is part of Project Aquarius—our effort to reproduce foundational AI papers from scratch. We believe understanding the classics makes you better at building the future.
+<Callout type="info" title="Join the Reproduction">
+This post is part of **Project Aquarius**. We believe that true understanding comes from rebuilding the classics. Check out our [full implementation guide](https://github.com/Project-Aquarius-White/simple-1997-lstm-reproduction) and join us in bringing the foundations of AI back to life.
 </Callout>

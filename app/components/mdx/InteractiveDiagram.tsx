@@ -3,6 +3,9 @@
 import React from 'react';
 import GradientFlowViz from '../visualizations/GradientFlowViz';
 import CECDemoViz from '../visualizations/CECDemoViz';
+import LSTMForwardViz from '../visualizations/LSTMForwardViz';
+import LSTMBackpropViz from '../visualizations/LSTMBackpropViz';
+import LSTM1997CellViz from '../visualizations/LSTM1997CellViz';
 
 interface InteractiveDiagramProps {
     id: string;
@@ -12,13 +15,18 @@ interface InteractiveDiagramProps {
 }
 
 export default function InteractiveDiagram({ id, title, height = "400px", children }: InteractiveDiagramProps) {
-    // Map IDs to actual components
     const renderVisualization = () => {
         switch (id) {
             case 'gradient-flow-viz':
                 return <GradientFlowViz />;
             case 'cec-demo':
                 return <CECDemoViz />;
+            case 'lstm-forward-viz':
+                return <LSTMForwardViz />;
+            case 'lstm-backprop-viz':
+                return <LSTMBackpropViz />;
+            case 'lstm-1997-cell':
+                return <LSTM1997CellViz />;
             default:
                 return (
                     <div className="flex flex-col items-center justify-center text-zinc-500">
@@ -30,7 +38,7 @@ export default function InteractiveDiagram({ id, title, height = "400px", childr
     };
 
     return (
-        <div className="my-16 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl bg-black">
+        <div className="my-16 border border-zinc-800 rounded-xl overflow-visible shadow-2xl bg-black">
             <div className="px-4 py-3 bg-zinc-900/80 border-b border-zinc-800 flex justify-between items-center">
                 <span className="font-mono text-xs text-zinc-400 font-bold uppercase tracking-wider">
                     {title || "Interactive Visualization"}
@@ -43,7 +51,7 @@ export default function InteractiveDiagram({ id, title, height = "400px", childr
             <div 
                 id={id} 
                 style={{ height }} 
-                className="w-full relative bg-zinc-950 flex flex-col items-center justify-center overflow-hidden"
+                className="w-full relative bg-zinc-950 flex flex-col items-center justify-center overflow-visible"
             >
                 {renderVisualization()}
             </div>
